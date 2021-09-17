@@ -20,8 +20,10 @@ class ArticleFetcher():
     time.sleep(1)
     r = requests.get(url)
     doc = BeautifulSoup(r.text, "html.parser")
-    print(doc.select(".title"))
- 
+    for image in doc.findAll('img'):
+      v = image.get('src', image.get('dfr-src'))
+      if v is not None:
+        print(v)
 
     for card in doc.select("div.row news-list-item"):
       content = card.select_one("p.bodytext").text
