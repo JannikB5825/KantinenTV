@@ -1,4 +1,8 @@
+import tkinter as tk
+from PIL import ImageTk, Image
+import os
 import requests
+from io import BytesIO
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import time
@@ -12,7 +16,6 @@ class CrawledFetcher():
   def selfString(self):
     return str(str(self.content) + " " + str(self.title) + " " + str(self.image))
 
- 
 
 class ArticleFetcher():  
   def fetch(self):
@@ -30,11 +33,41 @@ class ArticleFetcher():
       articles.append(crawled)
     return articles
 
- #moin
 
+def nextImage():
+  global counter, card, panel, root
+  if counter+1 == 5:
+    counter = 0
+  else:
+    counter += 1
+  panel.destroy()
+  img_url = card[counter].image
+  print(img_url)
+  if img_url != None:
+    response = requests.get(img_url)
+    img_data = response.content
+    img = ImageTk.PhotoImage(Image.open(BytesIO(img_data)))
+    panel = tk.Label(root, image=img)
+    panel.pack(side="bottom", fill="both", expand="yes")
+    print("hello")
+    root.update()
+
+
+root = tk.Tk()
 fetcher = ArticleFetcher()
+button = tk.Button(root, text="Next image", command=lambda: nextImage())
+button.pack()
+panel = tk.Label(root)
+panel.pack(side="bottom", fill="both", expand="yes")
 card = fetcher.fetch()
-w = open("test.txt","a")
-for x in range(0,5):
-  w.write(card[x].selfString())
-  w.write("\n")
+counter = 0
+
+def __main__():
+  #w = open("test.txt","a")
+  #for x in range(0,5):
+  #  w.write(card[x].selfString())
+  #  w.write("\n")
+  root.after(0, __main__)
+
+root.after(100, __main__)
+root.mainloop()
