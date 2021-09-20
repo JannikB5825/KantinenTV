@@ -9,6 +9,8 @@ class CrawledFetcher():
     self.content = content
     self.title = title
     self.image = image
+  def selfString(self):
+    return str(str(self.content) + " " + str(self.title) + " " + str(self.image))
 
  
 
@@ -16,26 +18,23 @@ class ArticleFetcher():
   def fetch(self):
     url = "https://www.bender.de/unternehmen/news"
     articles = [ ]
-    print(url)
     time.sleep(1)
     r = requests.get(url)
     doc = BeautifulSoup(r.text, "html.parser")
-    for image in doc.findAll('img'):
-      v = image.get('src', image.get('dfr-src'))
-      if v is not None:
-        print(v)
 
-    for card in doc.select("div.row news-list-item"):
+    for card in doc.select(".row.news-list-item"):
       content = card.select_one("p.bodytext").text
-      title = card.select("a.title").text
-      image = card.select_one("img.img-responsive").text
-      crawled = CrawledFetcher(content, title, image)
+      title = card.select("a.title")
+      img = card.select_one("img").get("src")
+      crawled = CrawledFetcher(content, title, img)
       articles.append(crawled)
-
     return articles
 
  #moin
 
 fetcher = ArticleFetcher()
-for article in fetcher.fetch():
-  print(article.image + ": " + article.title)
+card = fetcher.fetch()
+w = open("test.txt","a")
+for x in range(0,5):
+  w.write(card[x].selfString())
+  w.write("\n")
