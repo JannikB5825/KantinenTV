@@ -53,8 +53,6 @@ class AplicationTkinter(Frame):
         self.txt_ticker_widget.after(SPEED, self.scroll_ticker)  # recursive each interval of millisecs
 
 
-# Here starts the program working process, until here was the GUI
-# CONSTANTS
 CHAR_UP = "\u25B2"
 CHAR_DOWN = "\u25BC"
 CHAR_EVEN = "="
