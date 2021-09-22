@@ -1,8 +1,10 @@
+#!usr/bin/python3
+# -*- coding: UTF-8 -*-
+
 from tkinter import *
 import time
 import threading
 from random import randint as randint, uniform as randlimit
-import stockAPI
 
 
 class AplicationTkinter(Frame):
@@ -20,6 +22,7 @@ class AplicationTkinter(Frame):
 
     def initGUI(self):
         # changes the window icon
+        self.parent.iconbitmap("tabla.ico")
         self.parent.title("Stock Exchange Ticker")
         # fix a status bar at the bottom of the window, for future improvements
         self.status_bar = Label(self.parent, text="", bd=1, relief=SUNKEN, anchor=W)
@@ -59,12 +62,17 @@ class AplicationTkinter(Frame):
 CHAR_UP = "\u25B2"
 CHAR_DOWN = "\u25BC"
 CHAR_EVEN = "="
-SPEED = 100
-
+SPEED = 250
+UPDATE_TIME = 60
 
 # INITIAL DATA, this must be changed to implement the load of a external source
-stock_market = stockAPI.get_both(stockAPI.stocks, stockAPI.cryptos)
-print(stock_market)
+stock_market = [["GOOG", "587.25", CHAR_UP, "(+12.14)"],
+                ["AAPL", "237.14", CHAR_UP, "(+7.25)"],
+                ["GTAT", "87.47", CHAR_DOWN, "(-1.18)"],
+                ["KNDI", "167.32", CHAR_UP, "(+6.85)"],
+                ["ORCL", "482.91", CHAR_DOWN, "(-24.65)"],
+                ["FBOK", "327.67", CHAR_DOWN, "(-11.78)"],
+                ["TWTR", "842.41", CHAR_UP, "(+15.45)"]]
 
 
 class StockTicker():
@@ -81,6 +89,24 @@ class StockTicker():
     """
     def __init__(self, list_data):
         self.symbol, self.price, self.direction, self.change = list_data
+
+    def update_ticker(self):
+        flt_price = float(self.price)
+        if randint(0, 9) == 0:
+            self.direction = CHAR_EVEN
+        else:
+            increase_percent = randlimit(-5, 5)
+            # TODO implementar normalvariate(0, 0.02) o gauss(0, 0.02)
+            flt_change = flt_price * increase_percent / 100
+            flt_new_price = flt_price + flt_change
+            self.price = "{:.2f}".format(flt_new_price)
+            if flt_change < 0:
+                self.direction = CHAR_DOWN
+            elif flt_change == 0:
+                self.direction = CHAR_EVEN
+            else:
+                self.direction = CHAR_UP
+            self.change = "({:+.2f})".format(flt_change)
 
     def ticker_to_text(self):
         return " |  {} {} {} {} ".format(self.symbol, self.price, self.direction, self.change)
@@ -104,12 +130,17 @@ class StockMarket():
         self.smarket = []
         self.load_market(l_inicial)
         self.current_ticker = self.get_one_ticker()
+        self.thread_updating = UpdateThread(self)
+        self.thread_updating.start()
 
     def load_market(self, l_inicial):
         for data_ticker in l_inicial:
             simple_ticker = StockTicker(data_ticker)
             self.smarket.append(simple_ticker)
 
+    def update_market(self):
+        for j in range(len(self.smarket)):
+            self.smarket[j].update_ticker()
 
     def get_one_ticker(self):
         self.one_ticker = self.smarket.pop(0)
@@ -127,6 +158,29 @@ class StockMarket():
 
     def get_tag(self):
         return self.one_ticker.direction
+
+
+class UpdateThread(threading.Thread):
+    """
+    Class UpdateThread(), subclass of Thread, handle the time to the next update of the stock market values
+    args:
+        market_1, a StockMarket class object to update
+    attributes:
+        my_check, string for debugging purpouses, it'll be implemented the source data management
+        the_market, StockMarket object that will be updated
+    methods:
+        run, overrides the Thread run method, and calls the update_market method of StockMarket class each interval
+    """
+    def __init__(self, market_1):
+        self.my_check = " CHECK "   # TODO replace with initial source data.
+        self.the_market = market_1
+        threading.Thread.__init__(self)
+
+    def run(self):
+        time.sleep(UPDATE_TIME)
+        self.the_market.update_market()
+        print(" UPDATED!!!")    # for debugging
+        self.run()
 
 
 # STARTS THE PROGRAM
