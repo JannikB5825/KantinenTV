@@ -1,6 +1,6 @@
 import requests
 import json
-
+import time
 
 stocks = ["ADDYY","ALV.DE"]
 cryptos = ["BTC"]
@@ -12,7 +12,8 @@ def get_stock(stocks):
         url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey=EP7VOHUF5XUQMVEX'
         r = requests.get(url, verify=False)
         data = json.loads(r.text)["Global Quote"]
-        back += data["01. symbol"] + " " + data["05. price"] + " " + data["10. change percent"] + "     "
+        back += data["01. symbol"] + " " + data["05. price"] + " " + data["10. change percent"] + "    "
+        time.sleep(1)
     return back
 
 
@@ -33,6 +34,10 @@ def get_cryptos(cryptos):
         else:
             dif = str(dif) + "%"
         back += symbol + " " + str(close) + " " + dif + "    "
+        time.sleep(1)
     return back
 
-print(get_cryptos(cryptos))
+def get_both(stocks, cryptos):
+    return get_stock(stocks) + get_cryptos(cryptos)
+
+print(get_both(stocks, cryptos))
