@@ -53,8 +53,6 @@ class AplicationTkinter(Frame):
         self.txt_ticker_widget.after(SPEED, self.scroll_ticker)  # recursive each interval of millisecs
 
 
-# Here starts the program working process, until here was the GUI
-# CONSTANTS
 CHAR_UP = "\u25B2"
 CHAR_DOWN = "\u25BC"
 CHAR_EVEN = "="
@@ -72,17 +70,7 @@ stock_market = [["GOOG", "587.25", CHAR_UP, "(+12.14)"],
 
 
 class StockTicker():
-    """
-    Class StockTicker, handle each stock symbol and their data
-    attributes:
-        symbol, string, the abbreviature of the securitie
-        price, string, the current price of the securitie
-        direction, string(1), is a character that indicates its las fix price went up, down or even
-        change, string, is the value of the last change surrounded by '()', the first character is '+' or '-'
-    methods:
-        update_ticker, update the securitie price, direction and change with random values
-        ticker_to_text, returns a formatted string with all the data of the securitie
-    """
+
     def __init__(self, list_data):
         self.symbol, self.price, self.direction, self.change = list_data
 
@@ -109,19 +97,7 @@ class StockTicker():
 
 
 class StockMarket():
-    """
-    Class StockMarket, creates and handle a list of StockTicker objects, and provide to the GUI of stuff for
-        the scroll ticker
-    attributes:
-        smarket, list of StockTicker objects
-        thread_actualizar, Thread object to update the stock market each time interval
-    methods:
-        load_market, load the list with StockTicker object taking the data from the initial source data.
-        update_market, update the objects of the list
-        get_one_ticker, getter function to return one securitie data in text format and rotates to the next one
-        get_next_character, returns a character of one securitie (if the securitie data is exhausted
-            retrieve another securitie) data to the GUI.
-    """
+
     def __init__(self, l_inicial):
         self.smarket = []
         self.load_market(l_inicial)
@@ -157,16 +133,6 @@ class StockMarket():
 
 
 class UpdateThread(threading.Thread):
-    """
-    Class UpdateThread(), subclass of Thread, handle the time to the next update of the stock market values
-    args:
-        market_1, a StockMarket class object to update
-    attributes:
-        my_check, string for debugging purpouses, it'll be implemented the source data management
-        the_market, StockMarket object that will be updated
-    methods:
-        run, overrides the Thread run method, and calls the update_market method of StockMarket class each interval
-    """
     def __init__(self, market_1):
         self.my_check = " CHECK "   # TODO replace with initial source data.
         self.the_market = market_1
