@@ -4,14 +4,15 @@ import threading
 from random import randint as randint, uniform as randlimit
 import stockAPI
 
+CHAR_UP = "\u25B2"
+CHAR_DOWN = "\u25BC"
+CHAR_EVEN = "="
+SPEED = 100
+FONTSIZE = 30
+stock_market = stockAPI.get_both(stockAPI.stocks, stockAPI.cryptos)
 
 class AplicationTkinter(Frame):
-    """
-    Class of tkinter.Frame subclass, Initializes the GUI
-    methods:
-        initGUI, draws the layout
-        scroll_ticker, inserts character by character in the Text widget
-    """
+
     def __init__(self, parent):
         Frame.__init__(self, parent)
         self.parent = parent
@@ -19,24 +20,12 @@ class AplicationTkinter(Frame):
         self.scroll_ticker()
 
     def initGUI(self):
-        # changes the window icon
-        self.parent.title("Stock Exchange Ticker")
-        # fix a status bar at the bottom of the window, for future improvements
-        self.status_bar = Label(self.parent, text="", bd=1, relief=SUNKEN, anchor=W)
-        self.status_bar.pack(side=BOTTOM, fill=X)
-        # content Frame for entry, for future improvements
         self.frm_1 = Frame(self.parent)
         self.frm_1.pack()
-        self.var_entry = StringVar()
-        self.ent_1 = Entry(self.frm_1, textvariable=self.var_entry)
-        self.ent_1.pack()
-        self.var_entry.set("a default value")
-        self.lblfr_1 = LabelFrame(self.parent, text="Ventana de Resultados")
+        self.lblfr_1 = LabelFrame(self.parent)
         self.lblfr_1.pack()
-        # creates an instance of the StockMarket class for contents the the data
         self.market_one = StockMarket(stock_market)
-        # the scrolling line of Text for show the data
-        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=56, wrap="none")
+        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=1090, wrap="none", font=("bold",FONTSIZE))
         self.txt_ticker_widget.pack(side=TOP, fill=X)
         self.txt_ticker_widget.tag_configure("up", foreground="green")
         self.txt_ticker_widget.tag_configure("down", foreground="red")
@@ -52,30 +41,8 @@ class AplicationTkinter(Frame):
         self.txt_ticker_widget.after(SPEED, self.scroll_ticker)  # recursive each interval of millisecs
 
 
-# Here starts the program working process, until here was the GUI
-# CONSTANTS
-CHAR_UP = "\u25B2"
-CHAR_DOWN = "\u25BC"
-CHAR_EVEN = "="
-SPEED = 100
-
-
-# INITIAL DATA, this must be changed to implement the load of a external source
-stock_market = stockAPI.get_both(stockAPI.stocks, stockAPI.cryptos)
-
-
 class StockTicker():
-    """
-    Class StockTicker, handle each stock symbol and their data
-    attributes:
-        symbol, string, the abbreviature of the securitie
-        price, string, the current price of the securitie
-        direction, string(1), is a character that indicates its las fix price went up, down or even
-        change, string, is the value of the last change surrounded by '()', the first character is '+' or '-'
-    methods:
-        update_ticker, update the securitie price, direction and change with random values
-        ticker_to_text, returns a formatted string with all the data of the securitie
-    """
+
     def __init__(self, list_data):
         self.symbol, self.price, self.direction, self.change = list_data
 
@@ -84,19 +51,7 @@ class StockTicker():
 
 
 class StockMarket():
-    """
-    Class StockMarket, creates and handle a list of StockTicker objects, and provide to the GUI of stuff for
-        the scroll ticker
-    attributes:
-        smarket, list of StockTicker objects
-        thread_actualizar, Thread object to update the stock market each time interval
-    methods:
-        load_market, load the list with StockTicker object taking the data from the initial source data.
-        update_market, update the objects of the list
-        get_one_ticker, getter function to return one securitie data in text format and rotates to the next one
-        get_next_character, returns a character of one securitie (if the securitie data is exhausted
-            retrieve another securitie) data to the GUI.
-    """
+    
     def __init__(self, l_inicial):
         self.smarket = []
         self.load_market(l_inicial)
@@ -125,8 +80,6 @@ class StockMarket():
     def get_tag(self):
         return self.one_ticker.direction
 
-
-# STARTS THE PROGRAM
 def main():
     the_window = Tk()
     aplicacion = AplicationTkinter(the_window)
