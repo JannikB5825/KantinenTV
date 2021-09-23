@@ -9,6 +9,7 @@ cryptos = ["BTC","ETH"]
 def get_stock(stocks):
     back = []
     for symbol in stocks:
+        time.sleep(1.5)
         url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey=EP7VOHUF5XUQMVEX'
         r = requests.get(url, verify=False)
         data = json.loads(r.text)["Global Quote"]
@@ -27,13 +28,13 @@ def get_stock(stocks):
             char = "="
             
         back.append([data["01. symbol"], close, char, dif])
-        time.sleep(1.5)
     return back
 
 
 def get_cryptos(cryptos):
     back = []
     for symbol in cryptos:
+        time.sleep(1.5)
         url = f'https://www.alphavantage.co/query?function=DIGITAL_CURRENCY_DAILY&symbol={symbol}&market=EUR&apikey=EP7VOHUF5XUQMVEX'
         r = requests.get(url, verify=False)
         data = json.loads(r.text)["Time Series (Digital Currency Daily)"]
@@ -54,7 +55,6 @@ def get_cryptos(cryptos):
             dif = "0.0%"
             char = "="
         back.append([symbol, str(close), char, dif])
-        time.sleep(1.5)
     return back
 
 def get_both(stocks, cryptos):
