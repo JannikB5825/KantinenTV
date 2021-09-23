@@ -13,8 +13,8 @@
 
     ### Weatherprogramm
 
-    -   [ ] Current Weather
-        -   [ ] Jetzige Temperatur
+    -   [x] Current Weather
+        -   [x] Jetzige Temperatur
     -   [ ] Leiste umwandeln
     -   [ ] Datum von den Tagen
     -   [ ] abgerundete Kanten

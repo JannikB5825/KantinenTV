@@ -1,4 +1,5 @@
 from tkinter import *
+import tkinter as ui
 from tkinter import messagebox 
 from configparser import ConfigParser
 import json as json_
@@ -55,24 +56,24 @@ mi4 = weather[14]
 
 root = Tk()
 root.title("Wetter API")
-root.geometry('750x400')
+root.geometry('1920x1080')
 
-location_lbl = Label(root, text='Grünberg', font=('bold', 20))
+location_lbl = Label(root, text='Grünberg', font=('bold', 12))
 location_lbl.config(background='#00d1e8')
-location_lbl.pack()
+location_lbl.place(x = 60, y = 830)
 
-weather[2] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[2]}@2x.png"))
-image = Label(root, image=weather[2])
-image.config(background='#00d1e8')
-image.pack()
+#weather[2] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[2]}@2x.png"))
+#image = Label(root, image=weather[2])
+#image.config(background='#00d1e8')
+#image.pack()
 
-status = Label(root, text=des, font=('bold', 15))
-status.config(background='#00d1e8')
-status.pack()
+#status = Label(root, text=des, font=('bold', 15))
+#status.config(background='#00d1e8')
+#status.pack()
 
 max_min_temp = Label(root, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
-max_min_temp.pack()
+max_min_temp.place(x =25, y = 770)
 
 url2 = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
 
@@ -95,25 +96,25 @@ description = weather2[0]
 icon_current = weather2[1]
 temp_current = weather2[2]
 
-max_min_temp = Label(root, text=f'{int(temp_current//1)}°', font=("bold", 20))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.pack()
-
-icon_current = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{icon_current}@2x.png"))
-image = Label(root, image=icon_current)
-image.config(background='#00d1e8')
-image.pack()
+temp_current = Label(root, text=f'{int(temp_current//1)}°', font=("bold", 20))
+temp_current.config(background='#00d1e8')
+temp_current.place(x = 30, y = 730)
 
 status = Label(root, text=description, font=('bold', 15))
 status.config(background='#00d1e8')
-status.pack()
+status.place(x = 15, y = 700)
+
+icon_current = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{icon_current}@2x.png").convert("RGBA"))
+image = Label(root, image=icon_current)
+image.config(background='#00d1e8')
+image.place(x = 0, y = 600)
 
 
 # ↑ current status
 ##############################################################################################################################################
 # ↓ next days
 
-
+'''
 weather[6] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[6]}@2x.png"))
 image = Label(root, image=weather[6])
 image.config(background='#00d1e8')
@@ -152,7 +153,24 @@ image.pack()
 max_min_temp = Label(root, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
 max_min_temp.pack()
+'''
 
+#################################################################################################################################
+# ↓ clock
+
+def update_clock():
+    hours = time.strftime("%H")
+    minutes = time.strftime("%M")
+    time_text = hours + ":" + minutes
+    digital_clock_lbl.config(text=time_text)
+    digital_clock_lbl.after(1000, update_clock)
+
+
+digital_clock_lbl = Label(text="00:00", font=("bold 12"))
+digital_clock_lbl.config(bg="#00d1e8")
+digital_clock_lbl.place(x = 10, y = 830)
+
+update_clock()
 
 root.attributes('-fullscreen', True)
 root.configure(background='#00d1e8')
