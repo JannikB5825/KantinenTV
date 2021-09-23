@@ -31,8 +31,6 @@ class AplicationTkinter(Frame):
         self.ent_1 = Entry(self.frm_1, textvariable=self.var_entry)
         self.ent_1.pack()
         self.var_entry.set("a default value")
-        str_ent_1 = self.ent_1.get()
-        # content LabelFrame to show the ticker scrolling line of text
         self.lblfr_1 = LabelFrame(self.parent, text="Ventana de Resultados")
         self.lblfr_1.pack()
         # creates an instance of the StockMarket class for contents the the data
@@ -64,7 +62,6 @@ SPEED = 100
 
 # INITIAL DATA, this must be changed to implement the load of a external source
 stock_market = stockAPI.get_both(stockAPI.stocks, stockAPI.cryptos)
-print(stock_market)
 
 
 class StockTicker():
