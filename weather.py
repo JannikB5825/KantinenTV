@@ -6,7 +6,7 @@ import json as json_
 import requests
 import time
 from PIL import ImageTk,Image  
-
+from datetime import datetime
 
 
 url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
@@ -33,10 +33,10 @@ def get_weather():
         max_temp4 = json['daily'][4]['temp']["max"]
         min_temp4 = json['daily'][4]['temp']["min"]
         icon4 = json['daily'][4]['weather'][0]['icon']
-        max_temp4 = json['daily'][5]['temp']["max"]
-        min_temp4 = json['daily'][5]['temp']["min"]
-        icon4 = json['daily'][5]['weather'][0]['icon']
-        final = [max_temp, min_temp, icon, description, max_temp1, min_temp1, icon1, max_temp2, min_temp2, icon2, max_temp3, min_temp3, icon3, max_temp4, min_temp4, icon4]
+        max_temp5 = json['daily'][5]['temp']["max"]
+        min_temp5 = json['daily'][5]['temp']["min"]
+        icon5 = json['daily'][5]['weather'][0]['icon']
+        final = [max_temp, min_temp, icon, description, max_temp1, min_temp1, icon1, max_temp2, min_temp2, icon2, max_temp3, min_temp3, icon3, max_temp4, min_temp4, icon4, max_temp5, min_temp5, icon5]
         return final
     else:
         return None
@@ -53,6 +53,8 @@ ma3 = weather[10]
 mi3 = weather[11]
 ma4 = weather[13]
 mi4 = weather[14]
+ma5 = weather[16]
+mi5 = weather[17]
 
 root = Tk()
 root.title("Wetter API")
@@ -60,20 +62,11 @@ root.geometry('1920x1080')
 
 location_lbl = Label(root, text='Grünberg', font=('bold', 12))
 location_lbl.config(background='#00d1e8')
-location_lbl.place(x = 60, y = 830)
-
-#weather[2] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[2]}@2x.png"))
-#image = Label(root, image=weather[2])
-#image.config(background='#00d1e8')
-#image.pack()
-
-#status = Label(root, text=des, font=('bold', 15))
-#status.config(background='#00d1e8')
-#status.pack()
+location_lbl.place(x = 90, y = 830)
 
 max_min_temp = Label(root, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x =25, y = 770)
+max_min_temp.place(x =135, y = 730)
 
 url2 = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
 
@@ -96,64 +89,74 @@ description = weather2[0]
 icon_current = weather2[1]
 temp_current = weather2[2]
 
+icon_current = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{icon_current}@2x.png"))
+image2 = Label(root, image=icon_current)
+image2.config(bg='#00d1e8')
+image2.place(x = 30, y = 670)
+
 temp_current = Label(root, text=f'{int(temp_current//1)}°', font=("bold", 20))
 temp_current.config(background='#00d1e8')
-temp_current.place(x = 30, y = 730)
+temp_current.place(x = 150, y = 690)
 
 status = Label(root, text=description, font=('bold', 15))
-status.config(background='#00d1e8')
-status.place(x = 15, y = 700)
+status.config(background='#00d1e8', justify="center")
+status.place(x = 52, y = 760)
 
-icon_current = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{icon_current}@2x.png").convert("RGBA"))
-image = Label(root, image=icon_current)
-image.config(background='#00d1e8')
-image.place(x = 0, y = 600)
 
 
 # ↑ current status
 ##############################################################################################################################################
 # ↓ next days
 
-'''
+
 weather[6] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[6]}@2x.png"))
 image = Label(root, image=weather[6])
 image.config(background='#00d1e8')
-image.pack()
+image.place(x = 320, y =760)
 
 max_min_temp = Label(root, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
-max_min_temp.pack()
+max_min_temp.place(x = 420, y = 800)
 
 
 weather[9] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[9]}@2x.png"))
 image = Label(root, image=weather[9])
 image.config(background='#00d1e8')
-image.pack()
+image.place(x = 570, y = 760)
 
 max_min_temp = Label(root, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
-max_min_temp.pack()
+max_min_temp.place(x = 670, y = 800)
 
 
 weather[12] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[12]}@2x.png"))
 image = Label(root, image=weather[12])
 image.config(background='#00d1e8')
-image.pack()
+image.place(x = 820, y = 760)
 
 max_min_temp = Label(root, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
-max_min_temp.pack()
+max_min_temp.place(x = 920, y = 800)
 
 
 weather[15] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[15]}@2x.png"))
 image = Label(root, image=weather[15])
 image.config(background='#00d1e8')
-image.pack()
+image.place(x = 1070, y = 760)
 
 max_min_temp = Label(root, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
-max_min_temp.pack()
-'''
+max_min_temp.place(x = 1170, y = 800)
+
+weather[18] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[18]}@2x.png"))
+image = Label(root, image=weather[18])
+image.config(background='#00d1e8')
+image.place(x = 1320, y = 760)
+
+max_min_temp = Label(root, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
+max_min_temp.config(background='#00d1e8')
+max_min_temp.place(x = 1420, y = 800)
+
 
 #################################################################################################################################
 # ↓ clock
@@ -168,9 +171,78 @@ def update_clock():
 
 digital_clock_lbl = Label(text="00:00", font=("bold 12"))
 digital_clock_lbl.config(bg="#00d1e8")
-digital_clock_lbl.place(x = 10, y = 830)
+digital_clock_lbl.place(x = 30, y = 830)
 
 update_clock()
+
+#####################################################################################################################################
+# ↓ date
+
+
+heute = Label(text="Heute:", font=("bold, 15"))
+heute.config(bg='#00d1e8')
+heute.place(x = 90, y = 660)
+
+morgen = Label(text="Morgen:", font=("bold, 15"))
+morgen.config(bg='#00d1e8')
+morgen.place(x = 365, y =750)
+
+def get_date():
+    time.sleep(1)
+    result = requests.get(url, verify=False)
+    if result:
+        json = json_.loads(result.text)
+        # Datum
+        date = json['daily'][2]['dt']
+        date1 = json['daily'][3]['dt']
+        date2 = json['daily'][4]['dt']
+        date3 = json['daily'][5]['dt']
+        i = [date, date1, date2, date3]
+        return i
+    else:
+        return None 
+
+ts = get_date()
+datum = ts[0]
+datum2 = ts[1]
+datum3 = ts[2]
+datum4 = ts[3]
+
+ts = int(datum)
+datum1 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
+ts = int(datum2)
+datum2 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
+ts = int(datum3)
+datum3 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
+ts = int(datum4)
+datum4 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
+
+date = Label(root, text=f'{datum1}:', font=("bold", 15))
+date.config(background='#00d1e8')
+date.place(x = 620, y = 750)
+date = Label(root, text=f'{datum2}:', font=("bold", 15))
+date.config(background='#00d1e8')
+date.place(x = 870, y = 750)
+date = Label(root, text=f'{datum3}:', font=("bold", 15))
+date.config(background='#00d1e8')
+date.place(x = 1120, y = 750)
+date = Label(root, text=f'{datum4}:', font=("bold", 15))
+date.config(background='#00d1e8')
+date.place(x = 1370, y = 750)
+
+
+#######################################################################################################################################
+# ↓ Rahmen / Balken 
+
+#canvas_width = 80
+#canvas_height = 40
+#w = Canvas(root, width=canvas_width,height=canvas_height)
+#w.pack()
+#
+#y = int(canvas_height / 2)
+#w.create_line(0, y, canvas_width, y, fill="#476042")
+#w.config(bg='#00d1e8')
+
 
 root.attributes('-fullscreen', True)
 root.configure(background='#00d1e8')
