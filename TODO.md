@@ -21,5 +21,5 @@
 
     ### Stockticker
 
-    -   [ ] zur Klasse umwandeln
+    -   [x] zur Klasse umwandeln
     -   [ ] mit relevanten Aktien/Cyrptos füllen
