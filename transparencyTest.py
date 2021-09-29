@@ -168,13 +168,13 @@ def update_clock():
     hours = time.strftime("%H")
     minutes = time.strftime("%M")
     time_text = hours + ":" + minutes
-    digital_clock_lbl.config(text=time_text)
+    canvas.itemconfigure(clock, text=time_text)
     digital_clock_lbl.after(1000, update_clock)
+    
 
 
 digital_clock_lbl = Label(text="00:00", font=("bold 12"))
-digital_clock_lbl.config(bg="#00d1e8")
-digital_clock_lbl.place(x = 30, y = 830)
+clock = canvas.create_text(70, 900, text=digital_clock_lbl["text"], font=("bold", 12))
 
 update_clock()
 
@@ -216,18 +216,14 @@ datum3 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
 ts = int(datum4)
 datum4 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
 
-date = Label(root, text=f'{datum1}:', font=("bold", 15))
-date.config(background='#00d1e8')
-date.place(x = 620, y = 750)
-date = Label(root, text=f'{datum2}:', font=("bold", 15))
-date.config(background='#00d1e8')
-date.place(x = 870, y = 750)
-date = Label(root, text=f'{datum3}:', font=("bold", 15))
-date.config(background='#00d1e8')
-date.place(x = 1120, y = 750)
-date = Label(root, text=f'{datum4}:', font=("bold", 15))
-date.config(background='#00d1e8')
-date.place(x = 1370, y = 750)
+canvas.create_text(620, 750, text=f'{datum1}:', font=("bold", 15))
+
+canvas.create_text(870, 750, text=f'{datum2}:', font=("bold", 15))
+
+canvas.create_text(1120, 750, text=f'{datum3}:', font=("bold", 15))
+
+canvas.create_text(1370, 750, text=f'{datum4}:', font=("bold", 15))
+
 
 
 canvas.config(background='gray')
