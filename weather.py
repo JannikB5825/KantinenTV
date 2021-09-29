@@ -60,6 +60,17 @@ root = Tk()
 root.title("Wetter API")
 root.geometry('1920x1080')
 
+root.wm_attributes('-transparentcolor', '#ab23ff')
+
+#######################################################################################################################################
+# ↓ Rahmen / Balken 
+
+#blackbars_img= ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\Black_Bars.png"))
+#blackbars = Label(root, image=blackbars_img)
+#blackbars.pack(fill="both", expand=YES)
+
+
+
 location_lbl = Label(root, text='Grünberg', font=('bold', 12))
 location_lbl.config(background='#00d1e8')
 location_lbl.place(x = 90, y = 830)
@@ -231,18 +242,9 @@ date.config(background='#00d1e8')
 date.place(x = 1370, y = 750)
 
 
-#######################################################################################################################################
-# ↓ Rahmen / Balken 
-
-#canvas_width = 80
-#canvas_height = 40
-#w = Canvas(root, width=canvas_width,height=canvas_height)
-#w.pack()
-#
-#y = int(canvas_height / 2)
-#w.create_line(0, y, canvas_width, y, fill="#476042")
-#w.config(bg='#00d1e8')
-
+#blackbars_img= ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\Black_Bars.png"))
+#blackbars = Label(root, image=blackbars_img)
+#blackbars.pack(fill="both", expand=YES)
 
 root.attributes('-fullscreen', True)
 root.configure(background='#00d1e8')
