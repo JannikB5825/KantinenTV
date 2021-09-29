@@ -10,18 +10,15 @@ from PIL import ImageTk,Image
 import sys
 from PyQt5.QtWidgets import QApplication
 from datetime import datetime
-<<<<<<< HEAD
 import ctypes
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
-=======
 import os
 import glob
 
 osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
 osPath = osPath.replace("\\","\\\\")+"\\\\"
 
->>>>>>> ff1bb56139d02fc0e600ac5748a9c9735ae059b5
 app = QApplication(sys.argv)
 screen = app.screens()[0]
 dpi = screen.physicalDotsPerInch()
@@ -141,11 +138,7 @@ canvas.create_image(320,760,anchor=NW,image=weather[6])
 canvas.create_text(420, 800, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
 
 
-<<<<<<< HEAD
-weather[9] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[9]}@2x.png"))
-=======
 weather[9] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[9]}@2x.png"))
->>>>>>> ff1bb56139d02fc0e600ac5748a9c9735ae059b5
 canvas.create_image(570,760,anchor=NW,image=weather[9])
 
 canvas.create_text(670, 800, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
