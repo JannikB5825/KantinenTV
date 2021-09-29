@@ -131,10 +131,9 @@ max_min_temp.config(background='#00d1e8')
 max_min_temp.place(x = 420, y = 800)
 
 
-weather[9] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[9]}@2x.png"))
-image = Label(root, image=weather[9])
- 
-image.place(x = 570, y = 760)
+weather[6] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[9]}@2x.png"))
+canvas.create_image(570,760,anchor=NW,image=weather[9])
+
 
 max_min_temp = Label(root, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
@@ -142,9 +141,8 @@ max_min_temp.place(x = 670, y = 800)
 
 
 weather[12] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[12]}@2x.png"))
-image = Label(root, image=weather[12])
- 
-image.place(x = 820, y = 760)
+canvas.create_image(820,760,anchor=NW,image=weather[12])
+
 
 max_min_temp = Label(root, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
@@ -152,18 +150,16 @@ max_min_temp.place(x = 920, y = 800)
 
 
 weather[15] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[15]}@2x.png"))
-image = Label(root, image=weather[15])
- 
-image.place(x = 1070, y = 760)
+canvas.create_image(1070,760,anchor=NW,image=weather[15])
+
 
 max_min_temp = Label(root, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
 max_min_temp.place(x = 1170, y = 800)
 
 weather[18] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[18]}@2x.png"))
-image = Label(root, image=weather[18])
- 
-image.place(x = 1320, y = 760)
+canvas.create_image(1320,760,anchor=NW,image=weather[18])
+
 
 max_min_temp = Label(root, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
 max_min_temp.config(background='#00d1e8')
