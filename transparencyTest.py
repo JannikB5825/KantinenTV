@@ -89,9 +89,9 @@ mi4 = weather[14]
 ma5 = weather[16]
 mi5 = weather[17]
 
-canvas.create_text(90, 830, text='Grünberg', font='bold, 12')
+canvas.create_text(165, 1050, text='Grünberg', font='bold, 12')
 
-canvas.create_text(135, 730, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold", 12))
+canvas.create_text(250, 930, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold", 12))
 
 url2 = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
 
@@ -116,14 +116,14 @@ temp_current = weather2[2]
 
 
 img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{icon_current}@2x.png"))
-canvas.create_image(30,670,anchor=NW,image=img2)
+canvas.create_image(65,850,anchor=NW,image=img2)
 
 
-canvas.create_text(30, 670, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold 12"))
+#canvas.create_text(30, 670, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold 12"))
 
-canvas.create_text(150, 690, text=f'{int(temp_current//1)}°', font=("bold 12"))
+canvas.create_text(260, 880, text=f'{int(temp_current//1)}°', font=("bold 15"))
 
-canvas.create_text(52, 760, text=description, font=('bold 15'))
+canvas.create_text(175, 980, text=description, font=('bold 12'))
 
 
 
@@ -133,32 +133,32 @@ canvas.create_text(52, 760, text=description, font=('bold 15'))
 
 
 weather[6] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[6]}@2x.png"))
-canvas.create_image(320,760,anchor=NW,image=weather[6])
+canvas.create_image(400,950,anchor=NW,image=weather[6])
 
-canvas.create_text(420, 800, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
+canvas.create_text(550, 1000, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
 
 
 weather[9] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[9]}@2x.png"))
-canvas.create_image(570,760,anchor=NW,image=weather[9])
+canvas.create_image(720,950,anchor=NW,image=weather[9])
 
-canvas.create_text(670, 800, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
+canvas.create_text(870, 1000, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
 
 
 weather[12] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[12]}@2x.png"))
-canvas.create_image(820,760,anchor=NW,image=weather[12])
+canvas.create_image(1050,950,anchor=NW,image=weather[12])
 
-canvas.create_text(920, 800, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
+canvas.create_text(1200, 1000, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
 
 
 weather[15] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[15]}@2x.png"))
-canvas.create_image(1070,760,anchor=NW,image=weather[15])
+canvas.create_image(1350,950,anchor=NW,image=weather[15])
 
-canvas.create_text(1170, 800, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
+canvas.create_text(1500, 1000, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
 
 weather[18] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[18]}@2x.png"))
-canvas.create_image(1320,760,anchor=NW,image=weather[18])
+canvas.create_image(1650,950,anchor=NW,image=weather[18])
 
-canvas.create_text(1420, 800, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
+canvas.create_text(1800, 1000, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
 
 
 #################################################################################################################################
@@ -174,7 +174,7 @@ def update_clock():
 
 
 digital_clock_lbl = Label(text="00:00", font=("bold 12"))
-clock = canvas.create_text(70, 900, text=digital_clock_lbl["text"], font=("bold", 12))
+clock = canvas.create_text(55, 1050, text=digital_clock_lbl["text"], font=("bold", 12))
 
 update_clock()
 
@@ -182,9 +182,9 @@ update_clock()
 # ↓ date
 
 
-canvas.create_text(90, 660, text="Heute:", font=("bold, 15"))
+canvas.create_text(140, 835, text="Heute:", font=("bold, 15"))
 
-canvas.create_text(365, 750, text="Morgen:", font=("bold, 15"))
+canvas.create_text(500, 945, text="Morgen:", font=("bold, 15"))
 
 def get_date():
     time.sleep(1)
@@ -216,13 +216,13 @@ datum3 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
 ts = int(datum4)
 datum4 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
 
-canvas.create_text(620, 750, text=f'{datum1}:', font=("bold", 15))
+canvas.create_text(820, 945, text=f'{datum1}:', font=("bold", 15))
 
-canvas.create_text(870, 750, text=f'{datum2}:', font=("bold", 15))
+canvas.create_text(1150, 945, text=f'{datum2}:', font=("bold", 15))
 
-canvas.create_text(1120, 750, text=f'{datum3}:', font=("bold", 15))
+canvas.create_text(1450, 945, text=f'{datum3}:', font=("bold", 15))
 
-canvas.create_text(1370, 750, text=f'{datum4}:', font=("bold", 15))
+canvas.create_text(1750, 945, text=f'{datum4}:', font=("bold", 15))
 
 
 
