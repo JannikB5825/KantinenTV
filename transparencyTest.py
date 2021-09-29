@@ -10,6 +10,11 @@ from PIL import ImageTk,Image
 import sys
 from PyQt5.QtWidgets import QApplication
 from datetime import datetime
+import os
+import glob
+
+osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
+osPath = osPath.replace("\\","\\\\")+"\\\\"
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -27,7 +32,7 @@ canvas.pack()
 
 
 #Load an image in the script
-img= ImageTk.PhotoImage(Image.open("C:\\KantinenTv\\KantinenTV-1\\Icon\\Black_Bars.png"))
+img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
 
 #Add image to the Canvas Items
 canvas.create_image(0,0,anchor=NW,image=img)
@@ -106,7 +111,7 @@ icon_current = weather2[1]
 temp_current = weather2[2]
 
 
-img2 = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{icon_current}@2x.png"))
+img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{icon_current}@2x.png"))
 canvas.create_image(30,670,anchor=NW,image=img2)
 
 
@@ -123,7 +128,7 @@ canvas.create_text(52, 760, text=description, font=('bold 15'))
 # ↓ next days
 
 
-weather[6] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[6]}@2x.png"))
+weather[6] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[6]}@2x.png"))
 canvas.create_image(320,760,anchor=NW,image=weather[6])
 
 max_min_temp = Label(root, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
@@ -131,7 +136,7 @@ max_min_temp.config(background='#00d1e8')
 max_min_temp.place(x = 420, y = 800)
 
 
-weather[6] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[9]}@2x.png"))
+weather[9] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[9]}@2x.png"))
 canvas.create_image(570,760,anchor=NW,image=weather[9])
 
 
@@ -140,7 +145,7 @@ max_min_temp.config(background='#00d1e8')
 max_min_temp.place(x = 670, y = 800)
 
 
-weather[12] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[12]}@2x.png"))
+weather[12] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[12]}@2x.png"))
 canvas.create_image(820,760,anchor=NW,image=weather[12])
 
 
@@ -149,7 +154,7 @@ max_min_temp.config(background='#00d1e8')
 max_min_temp.place(x = 920, y = 800)
 
 
-weather[15] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[15]}@2x.png"))
+weather[15] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[15]}@2x.png"))
 canvas.create_image(1070,760,anchor=NW,image=weather[15])
 
 
@@ -157,7 +162,7 @@ max_min_temp = Label(root, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bol
 max_min_temp.config(background='#00d1e8')
 max_min_temp.place(x = 1170, y = 800)
 
-weather[18] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[18]}@2x.png"))
+weather[18] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[18]}@2x.png"))
 canvas.create_image(1320,760,anchor=NW,image=weather[18])
 
 
