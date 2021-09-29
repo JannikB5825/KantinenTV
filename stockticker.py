@@ -3,7 +3,9 @@ import time
 import threading
 from random import randint as randint, uniform as randlimit
 import stockAPI
+import ctypes
 
+user32 = ctypes.windll.user32
 CHAR_UP = "\u25B2"
 CHAR_DOWN = "\u25BC"
 CHAR_EVEN = "="
@@ -21,12 +23,13 @@ class AplicationTkinter(Frame):
 
     def initGUI(self):
         self.frm_1 = Frame(self.parent)
-        self.frm_1.pack()
+        self.frm_1.place(x=0,y=0)
         self.lblfr_1 = LabelFrame(self.parent)
-        self.lblfr_1.pack()
+        self.lblfr_1.place(x=0,y=0)
         self.market_one = StockMarket(stock_market)
-        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=1090, wrap="none", font=("bold",FONTSIZE))
+        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=user32.GetSystemMetrics(1), wrap="none", font=("bold",FONTSIZE))
         self.txt_ticker_widget.pack(side=TOP, fill=X)
+        print(self.txt_ticker_widget.winfo_height())
         self.txt_ticker_widget.tag_configure("up", foreground="green")
         self.txt_ticker_widget.tag_configure("down", foreground="red")
         self.txt_ticker_widget.tag_configure("even", foreground="white")
@@ -80,11 +83,11 @@ class StockMarket():
     def get_tag(self):
         return self.one_ticker.direction
 
-def main():
-    the_window = Tk()
-    aplicacion = AplicationTkinter(the_window)
-    # init the GUI process
-    the_window.mainloop()
-
-if __name__ == '__main__':
-    main()
+#def main():
+#    the_window = Tk()
+#    aplicacion = AplicationTkinter(the_window)
+#    # init the GUI process
+#    the_window.mainloop()
+#
+#if __name__ == '__main__':
+#    main()
