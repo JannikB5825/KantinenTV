@@ -5,7 +5,9 @@ from configparser import ConfigParser
 import json as json_
 import requests
 import time
-from PIL import ImageTk,Image  
+from PIL import ImageTk,Image
+import sys
+from PyQt5.QtWidgets import QApplication
 from datetime import datetime
 
 
@@ -60,7 +62,6 @@ root = Tk()
 root.title("Wetter API")
 root.geometry('1920x1080')
 
-root.wm_attributes('-transparentcolor', '#ab23ff')
 
 #######################################################################################################################################
 # ↓ Rahmen / Balken 
