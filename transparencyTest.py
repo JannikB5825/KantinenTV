@@ -10,7 +10,9 @@ from PIL import ImageTk,Image
 import sys
 from PyQt5.QtWidgets import QApplication
 from datetime import datetime
-
+import ctypes
+user32 = ctypes.windll.user32
+screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
 app = QApplication(sys.argv)
 screen = app.screens()[0]
 dpi = screen.physicalDotsPerInch()
@@ -18,8 +20,9 @@ app.quit()
 #Create an instance of tkinter frame
 root = Tk()
 root.tk.call('tk', 'scaling', '-displayof', '.', dpi/72.0)
-#Set the geometry of tkinter frame
-root.geometry("1920x1080")
+#Set the geometry of tkinter frame^
+
+root.geometry(screensize)
 
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
@@ -126,44 +129,30 @@ canvas.create_text(52, 760, text=description, font=('bold 15'))
 weather[6] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[6]}@2x.png"))
 canvas.create_image(320,760,anchor=NW,image=weather[6])
 
-max_min_temp = Label(root, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 420, y = 800)
+canvas.create_text(420, 800, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
 
 
-weather[6] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[9]}@2x.png"))
+weather[9] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[9]}@2x.png"))
 canvas.create_image(570,760,anchor=NW,image=weather[9])
 
-
-max_min_temp = Label(root, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 670, y = 800)
+canvas.create_text(670, 800, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
 
 
 weather[12] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[12]}@2x.png"))
 canvas.create_image(820,760,anchor=NW,image=weather[12])
 
-
-max_min_temp = Label(root, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 920, y = 800)
+canvas.create_text(920, 800, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
 
 
 weather[15] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[15]}@2x.png"))
 canvas.create_image(1070,760,anchor=NW,image=weather[15])
 
-
-max_min_temp = Label(root, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 1170, y = 800)
+canvas.create_text(1170, 800, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
 
 weather[18] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[18]}@2x.png"))
 canvas.create_image(1320,760,anchor=NW,image=weather[18])
 
-
-max_min_temp = Label(root, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 1420, y = 800)
+canvas.create_text(1420, 800, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
 
 
 #################################################################################################################################
@@ -187,13 +176,9 @@ update_clock()
 # ↓ date
 
 
-heute = Label(text="Heute:", font=("bold, 15"))
-heute.config(bg='#00d1e8')
-heute.place(x = 90, y = 660)
+canvas.create_text(90, 660, text="Heute:", font=("bold, 15"))
 
-morgen = Label(text="Morgen:", font=("bold, 15"))
-morgen.config(bg='#00d1e8')
-morgen.place(x = 365, y =750)
+canvas.create_text(365, 750, text="Morgen:", font=("bold, 15"))
 
 def get_date():
     time.sleep(1)
