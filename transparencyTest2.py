@@ -19,6 +19,15 @@ screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics
 osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
 osPath = osPath.replace("\\","\\\\")+"\\\\"
 
+kuerzel ={
+    "Monday" : "Mo.",
+    "Tuesday" : "Di.",
+    "Wednesday" : "Mi.",
+    "Thursday" : "Do.",
+    "Friday" : "Fr.",
+    "Saturday" : "Sa.",
+    "Sunday" : "So."
+}
 app = QApplication(sys.argv)
 screen = app.screens()[0]
 dpi = screen.physicalDotsPerInch()
@@ -203,19 +212,12 @@ def get_date():
         return None 
 
 ts = get_date()
-datum = ts[0]
-datum2 = ts[1]
-datum3 = ts[2]
-datum4 = ts[3]
 
-ts = int(datum)
-datum1 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
-ts = int(datum2)
-datum2 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
-ts = int(datum3)
-datum3 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
-ts = int(datum4)
-datum4 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
+datum1 = kuerzel[datetime.utcfromtimestamp(int(ts[0])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[0])).strftime('%d.%m')
+datum2 = kuerzel[datetime.utcfromtimestamp(int(ts[1])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[1])).strftime('%d.%m')
+datum3 = kuerzel[datetime.utcfromtimestamp(int(ts[2])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[2])).strftime('%d.%m')
+datum4 = kuerzel[datetime.utcfromtimestamp(int(ts[3])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[3])).strftime('%d.%m')
+
 
 date = Label(root, text=f'{datum1}:', font=("bold", 15))
 date.config(background='#00d1e8')
