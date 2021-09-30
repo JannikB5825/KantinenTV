@@ -128,6 +128,21 @@ def get_all_article():
                                  x["urlToImage"],
                 ])
         return articles
+    
+    
+def get_table():
+    url3 = "https://api.openligadb.de/getbltable/bl1/2021"
+    time.sleep(1)
+    result = requests.get(url3, verify=False)
+    if result:
+        json = json_.loads(result.text)
+        tabelle = []
+        for i in range(0,17):
+            tabelle.append(json[i]["teamName"])
+        x = tabelle
+        return x
+    else:
+        return None
 
 def show_articles(articles):
     global root, canvas
@@ -155,7 +170,9 @@ weather = get_weather()
 currentWeather = get_current()
 dateWeather = get_date()
 articles = get_all_article()
+tables = get_table()
 
+canvas.create_text(0, 0, text=tables, font=("bold 8"))
 
 img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
 canvas.create_image(65,850,anchor=NW,image=img2)
