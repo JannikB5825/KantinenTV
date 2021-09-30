@@ -34,7 +34,14 @@ url = 'https://newsapi.org/v2/top-headlines?country=de&apiKey=cc1ce8c5d19b4a198f
 result = requests.get(url, verify=False)        
 json = json_.loads(result.text)
 raw_data = urllib.request.urlopen(json["articles"][0]["urlToImage"]).read()
-img= ImageTk.PhotoImage(Image.open(io.BytesIO(raw_data)))
+
+    
+basewidth = 700
+img = Image.open(io.BytesIO(raw_data))
+wpercent = (basewidth/float(img.size[0]))
+hsize = int((float(img.size[1])*float(wpercent)))
+img = img.resize((basewidth,hsize), Image.ANTIALIAS)
+img= ImageTk.PhotoImage(img)
 canvas.create_image(0,0,anchor=NW,image=img)
 
 root.mainloop()

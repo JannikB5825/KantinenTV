@@ -9,6 +9,8 @@ from PyQt5.QtWidgets import QApplication
 from datetime import datetime
 import ctypes
 import os
+import urllib
+import io
 #import stockticker
 
 user32 = ctypes.windll.user32
@@ -27,13 +29,13 @@ kuerzel ={
 }
 
 weatherColors={
-    2 : "#2e2e2e",
-    3 : "#4f4f4f",
-    5 : "#3d3d3d",
-    6 : "#e8e8e8",
-    7 : "#c4c4c4",
-    8 : "#33cdde",
-    9 : "#27808a"
+    2 : "#2e2e2e", #Gewitter
+    3 : "#4f4f4f", #Nisel regen
+    5 : "#3d3d3d", #Regen
+    6 : "#e8e8e8", #Schnee
+    7 : "#c4c4c4", #Nebel
+    8 : "#33cdde", #Sonnig
+    9 : "#27808a" #Wolken
 }
 
 
@@ -56,8 +58,8 @@ canvas.place(x =0, y = 0)
 
 
 #Load an image in the script
-img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
-canvas.create_image(0,0,anchor=NW,image=img)
+bg_img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
+bg = canvas.create_image(0,0,anchor=NW,image=bg_img)
 
 
 def get_weather():
@@ -111,9 +113,49 @@ def update_clock():
     digital_clock_lbl.after(1000, update_clock)
     
     
+def get_all_article():
+    url = 'https://newsapi.org/v2/top-headlines?country=de&apiKey=cc1ce8c5d19b4a198fcd040fcbb47a6a'
+    result = requests.get(url, verify=False)        
+    if result:
+        json = json_.loads(result.text)
+        articles = []
+        for x in json["articles"]:
+            if x["urlToImage"] != "null":
+                articles.append([x["title"],
+                                 x["description"],
+                                 x["author"],
+                                 x["publishedAt"],
+                                 x["urlToImage"],
+                ])
+        return articles
+
+def show_articles(articles):
+    global root, canvas
+    nowArticle = articles.pop(0)
+    articles.append(nowArticle)
+    titel = "Leer"
+    raw_data = urllib.request.urlopen(nowArticle[4]).read()
+    basewidth = 700
+    img = Image.open(io.BytesIO(raw_data))
+    wpercent = (basewidth/float(img.size[0]))
+    hsize = int((float(img.size[1])*float(wpercent)))
+    img = img.resize((basewidth,hsize), Image.ANTIALIAS)
+    img= ImageTk.PhotoImage(img)
+    canvas.create_image(500,500,anchor=NW,image=img)
+    if titel == "Leer":
+        titel = canvas.create_text(100,200, text=nowArticle[0], font=('bold 12'))
+    else:
+        canvas.itemconfig(titel, text = nowArticle[0], font=('bold',12))
+        
+    canvas.update()
+    root.after(5000,lambda: show_articles(articles))
+    
+    
 weather = get_weather()
 currentWeather = get_current()
 dateWeather = get_date()
+articles = get_all_article()
+
 
 img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
 canvas.create_image(65,850,anchor=NW,image=img2)
@@ -166,9 +208,11 @@ canvas.create_text(1150, 945, text=f'{dateWeather[1]}:', font=("bold", 15))
 canvas.create_text(1450, 945, text=f'{dateWeather[2]}:', font=("bold", 15))
 canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=("bold", 15))
 
+
 if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
     canvas.config(background=weatherColors[9])
 else:
     canvas.config(background=weatherColors[currentWeather[3]//100])
 root.attributes('-fullscreen', True)
+root.after(5000,lambda: show_articles(get_all_article()))
 root.mainloop()
