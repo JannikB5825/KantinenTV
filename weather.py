@@ -1,3 +1,4 @@
+#Import the required Libraries
 from tkinter import *
 import tkinter as ui
 from tkinter import messagebox 
@@ -9,6 +10,47 @@ from PIL import ImageTk,Image
 import sys
 from PyQt5.QtWidgets import QApplication
 from datetime import datetime
+import ctypes
+import os
+import stockticker
+
+user32 = ctypes.windll.user32
+screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
+osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
+osPath = osPath.replace("\\","\\\\")+"\\\\"
+
+kuerzel ={
+    "Monday" : "Mo.",
+    "Tuesday" : "Di.",
+    "Wednesday" : "Mi.",
+    "Thursday" : "Do.",
+    "Friday" : "Fr.",
+    "Saturday" : "Sa.",
+    "Sunday" : "So."
+}
+
+app = QApplication(sys.argv)
+screen = app.screens()[0]
+dpi = screen.physicalDotsPerInch()
+app.quit()
+#Create an instance of tkinter frame
+root = Tk()
+root.tk.call('tk', 'scaling', '-displayof', '.', dpi/72.0)
+#Set the geometry of tkinter frame^
+
+root.geometry(screensize)
+
+#Create a canvas
+canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
+canvas.place(x =0, y = 0)
+aplicacion = stockticker.AplicationTkinter(root)
+
+
+#Load an image in the script
+img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
+
+#Add image to the Canvas Items
+canvas.create_image(0,0,anchor=NW,image=img)
 
 
 url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
@@ -58,27 +100,9 @@ mi4 = weather[14]
 ma5 = weather[16]
 mi5 = weather[17]
 
-root = Tk()
-root.title("Wetter API")
-root.geometry('1920x1080')
+canvas.create_text(165, 1050, text='Grünberg', font='bold, 12')
 
-
-#######################################################################################################################################
-# ↓ Rahmen / Balken 
-
-#blackbars_img= ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\Black_Bars.png"))
-#blackbars = Label(root, image=blackbars_img)
-#blackbars.pack(fill="both", expand=YES)
-
-
-
-location_lbl = Label(root, text='Grünberg', font=('bold', 12))
-location_lbl.config(background='#00d1e8')
-location_lbl.place(x = 90, y = 830)
-
-max_min_temp = Label(root, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x =135, y = 730)
+canvas.create_text(250, 930, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold", 12))
 
 url2 = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
 
@@ -101,18 +125,16 @@ description = weather2[0]
 icon_current = weather2[1]
 temp_current = weather2[2]
 
-icon_current = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{icon_current}@2x.png"))
-image2 = Label(root, image=icon_current)
-image2.config(bg='#00d1e8')
-image2.place(x = 30, y = 670)
 
-temp_current = Label(root, text=f'{int(temp_current//1)}°', font=("bold", 20))
-temp_current.config(background='#00d1e8')
-temp_current.place(x = 150, y = 690)
+img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{icon_current}@2x.png"))
+canvas.create_image(65,850,anchor=NW,image=img2)
 
-status = Label(root, text=description, font=('bold', 15))
-status.config(background='#00d1e8', justify="center")
-status.place(x = 52, y = 760)
+
+#canvas.create_text(30, 670, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold 12"))
+
+canvas.create_text(260, 880, text=f'{int(temp_current//1)}°', font=("bold 15"))
+
+canvas.create_text(175, 980, text=description, font=('bold 12'))
 
 
 
@@ -121,53 +143,33 @@ status.place(x = 52, y = 760)
 # ↓ next days
 
 
-weather[6] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[6]}@2x.png"))
-image = Label(root, image=weather[6])
-image.config(background='#00d1e8')
-image.place(x = 320, y =760)
+weather[6] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[6]}@2x.png"))
+canvas.create_image(400,950,anchor=NW,image=weather[6])
 
-max_min_temp = Label(root, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 420, y = 800)
+canvas.create_text(550, 1000, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
 
 
-weather[9] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[9]}@2x.png"))
-image = Label(root, image=weather[9])
-image.config(background='#00d1e8')
-image.place(x = 570, y = 760)
+weather[9] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[9]}@2x.png"))
+canvas.create_image(720,950,anchor=NW,image=weather[9])
 
-max_min_temp = Label(root, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 670, y = 800)
+canvas.create_text(870, 1000, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
 
 
-weather[12] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[12]}@2x.png"))
-image = Label(root, image=weather[12])
-image.config(background='#00d1e8')
-image.place(x = 820, y = 760)
+weather[12] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[12]}@2x.png"))
+canvas.create_image(1050,950,anchor=NW,image=weather[12])
 
-max_min_temp = Label(root, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 920, y = 800)
+canvas.create_text(1200, 1000, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
 
 
-weather[15] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[15]}@2x.png"))
-image = Label(root, image=weather[15])
-image.config(background='#00d1e8')
-image.place(x = 1070, y = 760)
+weather[15] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[15]}@2x.png"))
+canvas.create_image(1350,950,anchor=NW,image=weather[15])
 
-max_min_temp = Label(root, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 1170, y = 800)
+canvas.create_text(1500, 1000, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
 
-weather[18] = ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\{weather[18]}@2x.png"))
-image = Label(root, image=weather[18])
-image.config(background='#00d1e8')
-image.place(x = 1320, y = 760)
+weather[18] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[18]}@2x.png"))
+canvas.create_image(1650,950,anchor=NW,image=weather[18])
 
-max_min_temp = Label(root, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
-max_min_temp.config(background='#00d1e8')
-max_min_temp.place(x = 1420, y = 800)
+canvas.create_text(1800, 1000, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
 
 
 #################################################################################################################################
@@ -177,13 +179,13 @@ def update_clock():
     hours = time.strftime("%H")
     minutes = time.strftime("%M")
     time_text = hours + ":" + minutes
-    digital_clock_lbl.config(text=time_text)
+    canvas.itemconfigure(clock, text=time_text)
     digital_clock_lbl.after(1000, update_clock)
+    
 
 
 digital_clock_lbl = Label(text="00:00", font=("bold 12"))
-digital_clock_lbl.config(bg="#00d1e8")
-digital_clock_lbl.place(x = 30, y = 830)
+clock = canvas.create_text(55, 1050, text=digital_clock_lbl["text"], font=("bold", 12))
 
 update_clock()
 
@@ -191,13 +193,9 @@ update_clock()
 # ↓ date
 
 
-heute = Label(text="Heute:", font=("bold, 15"))
-heute.config(bg='#00d1e8')
-heute.place(x = 90, y = 660)
+canvas.create_text(140, 835, text="Heute:", font=("bold, 15"))
 
-morgen = Label(text="Morgen:", font=("bold, 15"))
-morgen.config(bg='#00d1e8')
-morgen.place(x = 365, y =750)
+canvas.create_text(500, 945, text="Morgen:", font=("bold, 15"))
 
 def get_date():
     time.sleep(1)
@@ -215,39 +213,22 @@ def get_date():
         return None 
 
 ts = get_date()
-datum = ts[0]
-datum2 = ts[1]
-datum3 = ts[2]
-datum4 = ts[3]
 
-ts = int(datum)
-datum1 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
-ts = int(datum2)
-datum2 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
-ts = int(datum3)
-datum3 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
-ts = int(datum4)
-datum4 = datetime.utcfromtimestamp(ts).strftime('%d.%m')
+datum1 = kuerzel[datetime.utcfromtimestamp(int(ts[0])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[0])).strftime('%d.%m')
+datum2 = kuerzel[datetime.utcfromtimestamp(int(ts[1])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[1])).strftime('%d.%m')
+datum3 = kuerzel[datetime.utcfromtimestamp(int(ts[2])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[2])).strftime('%d.%m')
+datum4 = kuerzel[datetime.utcfromtimestamp(int(ts[3])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[3])).strftime('%d.%m')
 
-date = Label(root, text=f'{datum1}:', font=("bold", 15))
-date.config(background='#00d1e8')
-date.place(x = 620, y = 750)
-date = Label(root, text=f'{datum2}:', font=("bold", 15))
-date.config(background='#00d1e8')
-date.place(x = 870, y = 750)
-date = Label(root, text=f'{datum3}:', font=("bold", 15))
-date.config(background='#00d1e8')
-date.place(x = 1120, y = 750)
-date = Label(root, text=f'{datum4}:', font=("bold", 15))
-date.config(background='#00d1e8')
-date.place(x = 1370, y = 750)
+canvas.create_text(820, 945, text=f'{datum1}:', font=("bold", 15))
+
+canvas.create_text(1150, 945, text=f'{datum2}:', font=("bold", 15))
+
+canvas.create_text(1450, 945, text=f'{datum3}:', font=("bold", 15))
+
+canvas.create_text(1750, 945, text=f'{datum4}:', font=("bold", 15))
 
 
-#blackbars_img= ImageTk.PhotoImage(Image.open(f"C:\\KantinenTv\\KantinenTV-1\\Icon\\Black_Bars.png"))
-#blackbars = Label(root, image=blackbars_img)
-#blackbars.pack(fill="both", expand=YES)
 
+canvas.config(background='gray')
 root.attributes('-fullscreen', True)
-root.configure(background='#00d1e8')
-
 root.mainloop()

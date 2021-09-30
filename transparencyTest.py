@@ -9,7 +9,7 @@ from PyQt5.QtWidgets import QApplication
 from datetime import datetime
 import ctypes
 import os
-import stockticker
+#import stockticker
 
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
@@ -37,20 +37,22 @@ weatherColors={
 }
 
 
-#Create an instance of tkinter frame
-root = Tk()
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
 dpi = screen.physicalDotsPerInch()
 app.quit()
+
+
+#Create an instance of tkinter frame
+root = Tk()
 root.tk.call('tk', 'scaling', '-displayof', '.', dpi/72.0)
 root.geometry(screensize)
 
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-aplicacion = stockticker.AplicationTkinter(root)
+#aplicacion = stockticker.AplicationTkinter(root)
 
 
 #Load an image in the script
