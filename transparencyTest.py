@@ -29,6 +29,16 @@ kuerzel ={
     "Sunday" : "So."
 }
 
+weatherColors={
+    2 : "#2e2e2e",
+    3 : "#4f4f4f",
+    5 : "#3d3d3d",
+    6 : "#e8e8e8",
+    7 : "#c4c4c4",
+    8 : "#33cdde",
+    9 : "#27808a"
+}
+
 
 #Create an instance of tkinter frame
 root = Tk()
@@ -72,13 +82,39 @@ def get_current():
     result = requests.get(url, verify=False)
     if result:
         json = json_.loads(result.text)
-        x = [json["weather"][0]["description"], json["weather"][0]["icon"],json["main"]["temp"]]
+        x = [json["weather"][0]["description"], json["weather"][0]["icon"],json["main"]["temp"],int(json["weather"][0]["id"])]
         return x
     else:
         return None
+
+
+def get_date():
+    global kuerzel
+    url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
+    time.sleep(1)
+    result = requests.get(url, verify=False)
+    if result:
+        json = json_.loads(result.text)
+        final = []
+        for x in range(2,6):
+            final.append(kuerzel[datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%A')] + 
+                         " " + 
+                         datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%d.%m'))
+        i = final
+        return i
+    else:
+        return None 
+    
+    
+def update_clock():
+    time_text = time.strftime("%H") + ":" + time.strftime("%M")
+    canvas.itemconfigure(clock, text=time_text)
+    digital_clock_lbl.after(1000, update_clock)
+    
     
 weather = get_weather()
 currentWeather = get_current()
+dateWeather = get_date()
 
 img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
 canvas.create_image(65,850,anchor=NW,image=img2)
@@ -116,12 +152,6 @@ canvas.create_text(1800, 1000, text=f'{int(weather[16]//1)}° / {int(weather[17]
 #################################################################################################################################
 # ↓ clock
 
-def update_clock():
-    time_text = time.strftime("%H") + ":" + time.strftime("%M")
-    canvas.itemconfigure(clock, text=time_text)
-    digital_clock_lbl.after(1000, update_clock)
-
-
 digital_clock_lbl = Label(text="00:00", font=("bold 12"))
 clock = canvas.create_text(55, 1050, text=digital_clock_lbl["text"], font=("bold", 12))
 
@@ -130,34 +160,16 @@ update_clock()
 #####################################################################################################################################
 # ↓ date
 
-
 canvas.create_text(140, 835, text="Heute:", font=("bold, 15"))
 canvas.create_text(500, 945, text="Morgen:", font=("bold, 15"))
-
-def get_date():
-    global kuerzel
-    url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
-    time.sleep(1)
-    result = requests.get(url, verify=False)
-    if result:
-        json = json_.loads(result.text)
-        final = []
-        for x in range(2,6):
-            final.append(kuerzel[datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%A')] + 
-                         " " + 
-                         datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%d.%m'))
-        i = final
-        return i
-    else:
-        return None 
-
-dateWeather = get_date()
-
 canvas.create_text(820, 945, text=f'{dateWeather[0]}:', font=("bold", 15))
 canvas.create_text(1150, 945, text=f'{dateWeather[1]}:', font=("bold", 15))
 canvas.create_text(1450, 945, text=f'{dateWeather[2]}:', font=("bold", 15))
 canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=("bold", 15))
 
-canvas.config(background='gray')
+if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
+    canvas.config(background=weatherColors[9])
+else:
+    canvas.config(background=weatherColors[currentWeather[3]//100])
 root.attributes('-fullscreen', True)
 root.mainloop()
