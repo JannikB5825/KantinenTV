@@ -101,8 +101,7 @@ def get_date():
             final.append(kuerzel[datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%A')] + 
                          " " + 
                          datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%d.%m'))
-        i = final
-        return i
+        return final
     else:
         return None 
     
@@ -139,8 +138,7 @@ def get_table():
         tabelle = []
         for i in range(0,17):
             tabelle.append(json[i]["teamName"])
-        x = tabelle
-        return x
+        return tabelle
     else:
         return None
 
@@ -172,7 +170,7 @@ dateWeather = get_date()
 articles = get_all_article()
 tables = get_table()
 
-canvas.create_text(0, 0, text=tables, font=("bold 8"))
+canvas.create_text(10, 10, text=tables, font=("bold 8"))
 
 img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
 canvas.create_image(65,850,anchor=NW,image=img2)
