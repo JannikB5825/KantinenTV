@@ -17,7 +17,7 @@ import stockticker
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
 osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
-osPath = osPath.replace("\\","\\\\")+"\\\\"
+osPath = osPath.replace("\\","\\")+"\\"
 
 kuerzel ={
     "Monday" : "Mo.",
@@ -29,15 +29,15 @@ kuerzel ={
     "Sunday" : "So."
 }
 
+
+#Create an instance of tkinter frame
+root = Tk()
+
 app = QApplication(sys.argv)
 screen = app.screens()[0]
 dpi = screen.physicalDotsPerInch()
 app.quit()
-#Create an instance of tkinter frame
-root = Tk()
 root.tk.call('tk', 'scaling', '-displayof', '.', dpi/72.0)
-#Set the geometry of tkinter frame^
-
 root.geometry(screensize)
 
 #Create a canvas
@@ -48,140 +48,78 @@ aplicacion = stockticker.AplicationTkinter(root)
 
 #Load an image in the script
 img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
-
-#Add image to the Canvas Items
 canvas.create_image(0,0,anchor=NW,image=img)
 
 
-url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
-
 def get_weather():
-    time.sleep(1)
+    url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
     result = requests.get(url, verify=False)
     if result:
         json = json_.loads(result.text)
-        # Stadt, Land, Temperatur, icon, Wetter
-        max_temp = json['daily'][0]['temp']["max"]
-        min_temp = json['daily'][0]['temp']["min"]
-        icon = json['daily'][0]['weather'][0]['icon']
-        description = json['daily'][0]['weather'][0]['description']
-        max_temp1 = json['daily'][1]['temp']["max"]
-        min_temp1 = json['daily'][1]['temp']["min"]
-        icon1 = json['daily'][1]['weather'][0]['icon']
-        max_temp2 = json['daily'][2]['temp']["max"]
-        min_temp2 = json['daily'][2]['temp']["min"]
-        icon2 = json['daily'][2]['weather'][0]['icon']
-        max_temp3 = json['daily'][3]['temp']["max"]
-        min_temp3 = json['daily'][3]['temp']["min"]
-        icon3 = json['daily'][3]['weather'][0]['icon']
-        max_temp4 = json['daily'][4]['temp']["max"]
-        min_temp4 = json['daily'][4]['temp']["min"]
-        icon4 = json['daily'][4]['weather'][0]['icon']
-        max_temp5 = json['daily'][5]['temp']["max"]
-        min_temp5 = json['daily'][5]['temp']["min"]
-        icon5 = json['daily'][5]['weather'][0]['icon']
-        final = [max_temp, min_temp, icon, description, max_temp1, min_temp1, icon1, max_temp2, min_temp2, icon2, max_temp3, min_temp3, icon3, max_temp4, min_temp4, icon4, max_temp5, min_temp5, icon5]
+        final = [json['daily'][0]['temp']["max"],json['daily'][0]['temp']["min"],json['daily'][0]['weather'][0]['icon'],json['daily'][0]['weather'][0]['description']]
+        for x in range(1,6):
+            final.append(json['daily'][x]['temp']["max"])
+            final.append(json['daily'][x]['temp']["min"])
+            final.append(json['daily'][x]['weather'][0]['icon'])
         return final
     else:
         return None
 
-weather = get_weather()
-des = weather[3]
-ma = weather[0]
-mi = weather[1]
-ma1 = weather[4]
-mi1 = weather[5]
-ma2 = weather[7]
-mi2 = weather[8]
-ma3 = weather[10]
-mi3 = weather[11]
-ma4 = weather[13]
-mi4 = weather[14]
-ma5 = weather[16]
-mi5 = weather[17]
-
-canvas.create_text(165, 1050, text='Grünberg', font='bold, 12')
-
-canvas.create_text(250, 930, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold", 12))
-
-url2 = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
 
 def get_current():
     time.sleep(1)
-    result = requests.get(url2, verify=False)
+    url = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
+    result = requests.get(url, verify=False)
     if result:
         json = json_.loads(result.text)
-        #current weather (description, temperature, icon)
-        description2 = json["weather"][0]["description"]
-        icon_current = json["weather"][0]["icon"]
-        temp_current = json["main"]["temp"]
-        x = [description2, icon_current, temp_current]
+        x = [json["weather"][0]["description"], json["weather"][0]["icon"],json["main"]["temp"]]
         return x
     else:
         return None
+    
+weather = get_weather()
+currentWeather = get_current()
 
-weather2 = get_current()
-description = weather2[0]
-icon_current = weather2[1]
-temp_current = weather2[2]
-
-
-img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{icon_current}@2x.png"))
+img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
 canvas.create_image(65,850,anchor=NW,image=img2)
-
-
-#canvas.create_text(30, 670, text=f'{int(ma//1)}° / {int(mi//1)}°', font=("bold 12"))
-
-canvas.create_text(260, 880, text=f'{int(temp_current//1)}°', font=("bold 15"))
-
-canvas.create_text(175, 980, text=description, font=('bold 12'))
-
-
+canvas.create_text(260, 880, text=f'{int(currentWeather[2]//1)}°', font=("bold 15"))
+canvas.create_text(175, 980, text=currentWeather[0], font=('bold 12'))
+canvas.create_text(165, 1050, text='Grünberg', font='bold, 12')
+canvas.create_text(250, 930, text=f'{int(weather[0]//1)}° / {int(weather[1]//1)}°', font=("bold", 12))
 
 # ↑ current status
 ##############################################################################################################################################
 # ↓ next days
 
-
 weather[6] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[6]}@2x.png"))
 canvas.create_image(400,950,anchor=NW,image=weather[6])
-
-canvas.create_text(550, 1000, text=f'{int(ma1//1)}° / {int(mi1//1)}°', font=("bold", 12))
+canvas.create_text(550, 1000, text=f'{int(weather[4]//1)}° / {int(weather[5]//1)}°', font=("bold", 12))
 
 
 weather[9] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[9]}@2x.png"))
 canvas.create_image(720,950,anchor=NW,image=weather[9])
-
-canvas.create_text(870, 1000, text=f'{int(ma2//1)}° / {int(mi2//1)}°', font=("bold", 12))
+canvas.create_text(870, 1000, text=f'{int(weather[7]//1)}° / {int(weather[8]//1)}°', font=("bold", 12))
 
 
 weather[12] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[12]}@2x.png"))
 canvas.create_image(1050,950,anchor=NW,image=weather[12])
-
-canvas.create_text(1200, 1000, text=f'{int(ma3//1)}° / {int(mi3//1)}°', font=("bold", 12))
-
+canvas.create_text(1200, 1000, text=f'{int(weather[10]//1)}° / {int(weather[11]//1)}°', font=("bold", 12))
 
 weather[15] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[15]}@2x.png"))
 canvas.create_image(1350,950,anchor=NW,image=weather[15])
-
-canvas.create_text(1500, 1000, text=f'{int(ma4//1)}° / {int(mi4//1)}°', font=("bold", 12))
+canvas.create_text(1500, 1000, text=f'{int(weather[13]//1)}° / {int(weather[14]//1)}°', font=("bold", 12))
 
 weather[18] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[18]}@2x.png"))
 canvas.create_image(1650,950,anchor=NW,image=weather[18])
-
-canvas.create_text(1800, 1000, text=f'{int(ma5//1)}° / {int(mi5//1)}°', font=("bold", 12))
-
+canvas.create_text(1800, 1000, text=f'{int(weather[16]//1)}° / {int(weather[17]//1)}°', font=("bold", 12))
 
 #################################################################################################################################
 # ↓ clock
 
 def update_clock():
-    hours = time.strftime("%H")
-    minutes = time.strftime("%M")
-    time_text = hours + ":" + minutes
+    time_text = time.strftime("%H") + ":" + time.strftime("%M")
     canvas.itemconfigure(clock, text=time_text)
     digital_clock_lbl.after(1000, update_clock)
-    
 
 
 digital_clock_lbl = Label(text="00:00", font=("bold 12"))
@@ -194,40 +132,31 @@ update_clock()
 
 
 canvas.create_text(140, 835, text="Heute:", font=("bold, 15"))
-
 canvas.create_text(500, 945, text="Morgen:", font=("bold, 15"))
 
 def get_date():
+    global kuerzel
+    url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
     time.sleep(1)
     result = requests.get(url, verify=False)
     if result:
         json = json_.loads(result.text)
-        # Datum
-        date = json['daily'][2]['dt']
-        date1 = json['daily'][3]['dt']
-        date2 = json['daily'][4]['dt']
-        date3 = json['daily'][5]['dt']
-        i = [date, date1, date2, date3]
+        final = []
+        for x in range(2,6):
+            final.append(kuerzel[datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%A')] + 
+                         " " + 
+                         datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%d.%m'))
+        i = final
         return i
     else:
         return None 
 
-ts = get_date()
+dateWeather = get_date()
 
-datum1 = kuerzel[datetime.utcfromtimestamp(int(ts[0])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[0])).strftime('%d.%m')
-datum2 = kuerzel[datetime.utcfromtimestamp(int(ts[1])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[1])).strftime('%d.%m')
-datum3 = kuerzel[datetime.utcfromtimestamp(int(ts[2])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[2])).strftime('%d.%m')
-datum4 = kuerzel[datetime.utcfromtimestamp(int(ts[3])).strftime('%A')] + " " + datetime.utcfromtimestamp(int(ts[3])).strftime('%d.%m')
-
-canvas.create_text(820, 945, text=f'{datum1}:', font=("bold", 15))
-
-canvas.create_text(1150, 945, text=f'{datum2}:', font=("bold", 15))
-
-canvas.create_text(1450, 945, text=f'{datum3}:', font=("bold", 15))
-
-canvas.create_text(1750, 945, text=f'{datum4}:', font=("bold", 15))
-
-
+canvas.create_text(820, 945, text=f'{dateWeather[0]}:', font=("bold", 15))
+canvas.create_text(1150, 945, text=f'{dateWeather[1]}:', font=("bold", 15))
+canvas.create_text(1450, 945, text=f'{dateWeather[2]}:', font=("bold", 15))
+canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=("bold", 15))
 
 canvas.config(background='gray')
 root.attributes('-fullscreen', True)

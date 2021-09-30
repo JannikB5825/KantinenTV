@@ -16,10 +16,10 @@
     -   [x] Current Weather
         -   [x] Jetzige Temperatur
     -   [ ] Leiste umwandeln
-    -   [ ] Datum von den Tagen
+    -   [x] Datum von den Tagen
     -   [ ] abgerundete Kanten
 
     ### Stockticker
 
     -   [x] zur Klasse umwandeln
-    -   [ ] mit relevanten Aktien/Cyrptos füllen
+    -   [x] mit relevanten Aktien/Cyrptos füllen

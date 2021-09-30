@@ -10,7 +10,7 @@ CHAR_UP = "\u25B2"
 CHAR_DOWN = "\u25BC"
 CHAR_EVEN = "="
 SPEED = 100
-FONTSIZE = 30
+FONTSIZE = 25
 stock_market = stockAPI.get_both(stockAPI.stocks, stockAPI.cryptos)
 
 class AplicationTkinter(Frame):
@@ -27,9 +27,8 @@ class AplicationTkinter(Frame):
         self.lblfr_1 = LabelFrame(self.parent)
         self.lblfr_1.place(x=0,y=0)
         self.market_one = StockMarket(stock_market)
-        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=user32.GetSystemMetrics(1), wrap="none", font=("bold",FONTSIZE))
+        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=500, wrap="none", font=("bold",FONTSIZE))
         self.txt_ticker_widget.pack(side=TOP, fill=X)
-        print(self.txt_ticker_widget.winfo_height())
         self.txt_ticker_widget.tag_configure("up", foreground="green")
         self.txt_ticker_widget.tag_configure("down", foreground="red")
         self.txt_ticker_widget.tag_configure("even", foreground="white")
