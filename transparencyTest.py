@@ -1,8 +1,5 @@
 #Import the required Libraries
 from tkinter import *
-import tkinter as ui
-from tkinter import messagebox 
-from configparser import ConfigParser
 import json as json_
 import requests
 import time
