@@ -40,6 +40,7 @@ weatherColors={
 
 
 
+
 app = QApplication(sys.argv)
 screen = app.screens()[0]
 dpi = screen.physicalDotsPerInch()
@@ -60,7 +61,24 @@ canvas.place(x =0, y = 0)
 #Load an image in the script
 bg_img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
 bg = canvas.create_image(0,0,anchor=NW,image=bg_img)
+titel = canvas.create_text(900,400, text="", font=('bold 12'), anchor='w')
+newNewsImage = ImageTk.PhotoImage(Image.open(osPath + "Icon\\Download.png"))
+newsImage = canvas.create_image(750,400,anchor=CENTER,image=newNewsImage)
 
+#Loads Football table
+distance = 10
+heightOfRow = 12
+tableTeams = []
+for x in range(0,18):
+    temp = 300+(distance * x + heightOfRow * x)
+    tableTeams.append(canvas.create_text(50,temp, text="123", font=('bold 12'), anchor='w'))
+tablePoints = []
+for x in range(0,18):
+    temp = 300+(distance * x + heightOfRow * x)
+    tablePoints.append(canvas.create_text(250,temp, text="1", font=('bold 12'), anchor='w'))
+tableLogos = []
+#for x in range(0,18):
+#    tableLogos.append(canvas.create_image(100+(distance * x + heightOfRow * x),50,anchor=CENTER))
 
 def get_weather():
     url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
@@ -128,49 +146,53 @@ def get_all_article():
                 ])
         return articles
     
-    
-def get_table():
+
+def get_team():
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
     time.sleep(1)
     result = requests.get(url3, verify=False)
     if result:
         json = json_.loads(result.text)
         tabelle = []
-        for i in range(0,17):
-            tabelle.append(json[i]["teamName"])
-        return tabelle
-    else:
-        return None
+        for i in range(0,18):
+            canvas.itemconfig(tableTeams[i], text = json[i]["shortName"])
+
+
+def get_points():
+    url3 = "https://api.openligadb.de/getbltable/bl1/2021"
+    time.sleep(1)
+    result = requests.get(url3, verify=False)
+    if result:
+        json = json_.loads(result.text)
+        points = []
+        for i in range(0,18):
+            canvas.itemconfig(tablePoints[i], text = json[i]["points"])
 
 def show_articles(articles):
-    global root, canvas
+    global newNewsImage
     nowArticle = articles.pop(0)
     articles.append(nowArticle)
-    titel = "Leer"
-    raw_data = urllib.request.urlopen(nowArticle[4]).read()
-    basewidth = 700
-    img = Image.open(io.BytesIO(raw_data))
-    wpercent = (basewidth/float(img.size[0]))
-    hsize = int((float(img.size[1])*float(wpercent)))
-    img = img.resize((basewidth,hsize), Image.ANTIALIAS)
-    img= ImageTk.PhotoImage(img)
-    canvas.create_image(500,500,anchor=NW,image=img)
-    if titel == "Leer":
-        titel = canvas.create_text(100,200, text=nowArticle[0], font=('bold 12'))
+    if None in nowArticle:
+        root.after(5000,lambda: show_articles(articles))
     else:
-        canvas.itemconfig(titel, text = nowArticle[0], font=('bold',12))
-        
-    canvas.update()
-    root.after(5000,lambda: show_articles(articles))
+        raw_data = urllib.request.urlopen(nowArticle[4]).read()
+        basewidth = 700
+        newNewsImage = Image.open(io.BytesIO(raw_data))
+        wpercent = (basewidth/float(newNewsImage.size[0]))
+        hsize = int((float(newNewsImage.size[1])*float(wpercent)))
+        newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
+        newNewsImage= ImageTk.PhotoImage(newNewsImage)
+        canvas.itemconfig(newsImage, image = newNewsImage)
+        canvas.itemconfig(titel, text = nowArticle[0])
+        root.after(5000,lambda: show_articles(articles))
     
     
 weather = get_weather()
 currentWeather = get_current()
 dateWeather = get_date()
 articles = get_all_article()
-tables = get_table()
-
-canvas.create_text(10, 10, text=tables, font=("bold 8"))
+get_points()
+get_team()
 
 img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
 canvas.create_image(65,850,anchor=NW,image=img2)
