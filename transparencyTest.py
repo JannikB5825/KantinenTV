@@ -11,7 +11,7 @@ import ctypes
 import os
 import urllib
 import io
-#import stockticker
+import stockticker
 
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
@@ -55,13 +55,13 @@ root.geometry(screensize)
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-#aplicacion = stockticker.AplicationTkinter(root)
+aplicacion = stockticker.AplicationTkinter(root)
 
 
 #Load an image in the script
 bg_img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
 bg = canvas.create_image(0,0,anchor=NW,image=bg_img)
-titel = canvas.create_text(1100,400, text="", font=('bold 12'), anchor='w')
+titel = canvas.create_text(1130,400, text="", font=('bold 12'), anchor='nw')
 newNewsImage = ImageTk.PhotoImage(Image.open(osPath + "Icon\\Download.png"))
 newsImage = canvas.create_image(750,400,anchor=CENTER,image=newNewsImage)
 
@@ -194,6 +194,27 @@ def get_logos():
             logos[i]= ImageTk.PhotoImage(logos[i])
             canvas.itemconfig(tableLogos[i], image = logos[i])
 
+def addLineBreaks(title, desc):
+    titleArr = title.split()
+    descArr = desc.split()
+    back = ""
+    temp = ""
+    for x in titleArr:
+        if len(temp+x) > 60:
+            back += temp + "\n"
+            temp = ""
+        else:
+            temp += x + " "
+    temp = ""
+    back += "\n"
+    for x in descArr:
+        if len(temp+x) > 60:
+            back += temp + "\n"
+            temp = ""
+        else:
+            temp += x + " "
+    return back
+
 def show_articles(articles):
     global newNewsImage
     nowArticle = articles.pop(0)
@@ -209,7 +230,7 @@ def show_articles(articles):
         newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
         newNewsImage= ImageTk.PhotoImage(newNewsImage)
         canvas.itemconfig(newsImage, image = newNewsImage)
-        canvas.itemconfig(titel, text = nowArticle[0])
+        canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1]))
         root.after(5000,lambda: show_articles(articles))
     
     

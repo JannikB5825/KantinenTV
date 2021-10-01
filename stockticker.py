@@ -23,11 +23,11 @@ class AplicationTkinter(Frame):
 
     def initGUI(self):
         self.frm_1 = Frame(self.parent)
-        self.frm_1.place(x=0,y=0)
+        self.frm_1.place(x=359,y=843)
         self.lblfr_1 = LabelFrame(self.parent)
-        self.lblfr_1.place(x=0,y=0)
+        self.lblfr_1.place(x=359,y=843)
         self.market_one = StockMarket(stock_market)
-        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=500, wrap="none", font=("bold",FONTSIZE))
+        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=50, wrap="none", font=("bold",FONTSIZE))
         self.txt_ticker_widget.pack(side=TOP, fill=X)
         self.txt_ticker_widget.tag_configure("up", foreground="green")
         self.txt_ticker_widget.tag_configure("down", foreground="red")
