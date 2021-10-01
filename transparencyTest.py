@@ -61,24 +61,33 @@ canvas.place(x =0, y = 0)
 #Load an image in the script
 bg_img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
 bg = canvas.create_image(0,0,anchor=NW,image=bg_img)
-titel = canvas.create_text(900,400, text="", font=('bold 12'), anchor='w')
+titel = canvas.create_text(1100,400, text="", font=('bold 12'), anchor='w')
 newNewsImage = ImageTk.PhotoImage(Image.open(osPath + "Icon\\Download.png"))
 newsImage = canvas.create_image(750,400,anchor=CENTER,image=newNewsImage)
 
 #Loads Football table
-distance = 10
-heightOfRow = 12
+distance = 22
+heightOfRow = 20
 tableTeams = []
 for x in range(0,18):
-    temp = 300+(distance * x + heightOfRow * x)
-    tableTeams.append(canvas.create_text(50,temp, text="123", font=('bold 12'), anchor='w'))
+    temp = 50+(distance * x + heightOfRow * x)
+    tableTeams.append(canvas.create_text(50,temp, text="123", font=('bold 20'), anchor='w'))
 tablePoints = []
 for x in range(0,18):
-    temp = 300+(distance * x + heightOfRow * x)
-    tablePoints.append(canvas.create_text(250,temp, text="1", font=('bold 12'), anchor='w'))
+    temp = 50+(distance * x + heightOfRow * x)
+    tablePoints.append(canvas.create_text(355,temp, text="1", font=('bold 20'), anchor='e'))
 tableLogos = []
-#for x in range(0,18):
-#    tableLogos.append(canvas.create_image(100+(distance * x + heightOfRow * x),50,anchor=CENTER))
+logos = []
+for x in range(0,18):
+    temp = 50+(distance * x + heightOfRow * x)
+    baseheight = 32
+    logos.append(Image.open(osPath + "Wappen\\Augsburg.png"))
+    hpercent = (baseheight/float(logos[x].size[1]))
+    wsize = int((float(logos[x].size[0])*float(hpercent)))
+    logos[x] = logos[x].resize((wsize,baseheight), Image.ANTIALIAS)
+    logos[x]= ImageTk.PhotoImage(logos[x])
+    tableLogos.append(canvas.create_image(21,temp,anchor=CENTER, image=logos[x]))
+
 
 def get_weather():
     url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
@@ -167,13 +176,30 @@ def get_points():
         points = []
         for i in range(0,18):
             canvas.itemconfig(tablePoints[i], text = json[i]["points"])
+            
+
+def get_logos():
+    url3 = "https://api.openligadb.de/getbltable/bl1/2021"
+    time.sleep(1)
+    result = requests.get(url3, verify=False)
+    if result:
+        json = json_.loads(result.text)
+        for i in range(0,18):
+            baseheight = 32
+            logoName = json[i]["shortName"]
+            logos[i] = Image.open(osPath + f"Wappen\\{logoName}.png")
+            wpercent = (baseheight/float(logos[i].size[1]))
+            hsize = int((float(logos[i].size[0])*float(wpercent)))
+            logos[i] = logos[i].resize((hsize,baseheight), Image.ANTIALIAS)
+            logos[i]= ImageTk.PhotoImage(logos[i])
+            canvas.itemconfig(tableLogos[i], image = logos[i])
 
 def show_articles(articles):
     global newNewsImage
     nowArticle = articles.pop(0)
     articles.append(nowArticle)
     if None in nowArticle:
-        root.after(5000,lambda: show_articles(articles))
+        root.after(0,lambda: show_articles(articles))
     else:
         raw_data = urllib.request.urlopen(nowArticle[4]).read()
         basewidth = 700
@@ -193,6 +219,7 @@ dateWeather = get_date()
 articles = get_all_article()
 get_points()
 get_team()
+get_logos()
 
 img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
 canvas.create_image(65,850,anchor=NW,image=img2)
