@@ -29,13 +29,13 @@ kuerzel ={
 }
 
 weatherColors={
-    2 : "#2e2e2e", #Gewitter
-    3 : "#4f4f4f", #Nisel regen
-    5 : "#3d3d3d", #Regen
-    6 : "#e8e8e8", #Schnee
-    7 : "#c4c4c4", #Nebel
-    8 : "#33cdde", #Sonnig
-    9 : "#27808a" #Wolken
+    2 : "gewitter.jpg", #Gewitter brauch neue Farbe
+    3 : "regen.jpg", #Nisel regen
+    5 : "regen.jpg", #Regen brauch neue Farbe
+    6 : "schnee.jpg", #Schnee
+    7 : "nebel.jpg", #Nebel
+    8 : "sonnig.jpg", #Sonnig
+    9 : "wolcken.jpg" #Wolken
 }
 
 
@@ -59,11 +59,12 @@ aplicacion = stockticker.AplicationTkinter(root)
 
 
 #Load an image in the script
+wetter = canvas.create_image(360,900,anchor="e",image=ImageTk.PhotoImage(Image.open(osPath + "Icon\\Download.png")))
 bg_img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
 bg = canvas.create_image(0,0,anchor=NW,image=bg_img)
-titel = canvas.create_text(1130,400, text="", font=('bold 12'), anchor='nw')
+titel = canvas.create_text(1130,450, text="", font=('bold 12'), anchor='w')
 newNewsImage = ImageTk.PhotoImage(Image.open(osPath + "Icon\\Download.png"))
-newsImage = canvas.create_image(750,400,anchor=CENTER,image=newNewsImage)
+newsImage = canvas.create_image(750,450,anchor=CENTER,image=newNewsImage)
 
 #Loads Football table
 distance = 22
@@ -194,7 +195,7 @@ def get_logos():
             logos[i]= ImageTk.PhotoImage(logos[i])
             canvas.itemconfig(tableLogos[i], image = logos[i])
 
-def addLineBreaks(title, desc):
+def addLineBreaks(title, desc, date, publisher):
     titleArr = title.split()
     descArr = desc.split()
     back = ""
@@ -213,6 +214,7 @@ def addLineBreaks(title, desc):
             temp = ""
         else:
             temp += x + " "
+    back += "\n-" + publisher + " " + date[:10].replace("-",".")
     return back
 
 def show_articles(articles):
@@ -230,7 +232,7 @@ def show_articles(articles):
         newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
         newNewsImage= ImageTk.PhotoImage(newNewsImage)
         canvas.itemconfig(newsImage, image = newNewsImage)
-        canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1]))
+        canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
         root.after(5000,lambda: show_articles(articles))
     
     
@@ -295,9 +297,15 @@ canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=("bold", 15))
 
 
 if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
-    canvas.config(background=weatherColors[9])
+    canvas.itemconfig(wetter,image=(osPath + "Wetter//" + weatherColors[9]))
 else:
-    canvas.config(background=weatherColors[currentWeather[3]//100])
+    basewidth = 700
+    newWetterBild = Image.open(osPath + "Wetter//" + weatherColors[currentWeather[3]//100])
+    wpercent = (basewidth/float(newWetterBild.size[0]))
+    hsize = int((float(newWetterBild.size[1])*float(wpercent)))
+    newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
+    newWetterBild= ImageTk.PhotoImage(newWetterBild)
+    canvas.itemconfig(wetter,image=newWetterBild)
 root.attributes('-fullscreen', True)
 root.after(5000,lambda: show_articles(get_all_article()))
 root.mainloop()
