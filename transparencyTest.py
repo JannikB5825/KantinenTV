@@ -11,7 +11,7 @@ import ctypes
 import os
 import urllib
 import io
-import stockticker
+#import stockticker
 
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
@@ -56,7 +56,7 @@ root.geometry(screensize)
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-aplicacion = stockticker.AplicationTkinter(root)
+#aplicacion = stockticker.AplicationTkinter(root)
 
 
 #Load an image in the script
