@@ -298,10 +298,10 @@ canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=("bold", 15))
 
 
 if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
-    canvas.itemconfig(wetter,image=(osPath + "Wetter//" + weatherColors[9]))
+    canvas.itemconfig(wetter,image=ImageTk.PhotoImage(Image.open(osPath + "Wetter\\" + weatherColors[9])))
 else:
     basewidth = 700
-    newWetterBild = Image.open(osPath + "Wetter//" + weatherColors[currentWeather[3]//100])
+    newWetterBild = Image.open(osPath + "Wetter\\" + weatherColors[currentWeather[3]//100])
     wpercent = (basewidth/float(newWetterBild.size[0]))
     hsize = int((float(newWetterBild.size[1])*float(wpercent)))
     newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
