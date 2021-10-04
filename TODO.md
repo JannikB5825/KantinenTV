@@ -1,25 +1,25 @@
 ### Hauptprogramm
 
--   [ ] Code optimieren
--   [ ] instalation auf dem Raspberry PI
--   [ ] langzeit Test
+    - [ ] Code optimieren
+    - [ ] instalation auf dem Raspberry PI
+    - [ ] langzeit Test
 
-    ### Newsprogramm
+### Newsprogramm
 
-    -   [ ] Bilder von URLs anzeigen
-    -   [ ] NewsAPI einbinden
-    -   [ ] Bilder und News durchlaufen lassen
-        -   [ ] Auf Intervalle einigen
+    -   [x] Bilder von URLs anzeigen
+    -   [x] NewsAPI einbinden
+    -   [x] Bilder und News durchlaufen lassen
+        -   [x] Auf Intervalle einigen(30s)
 
-    ### Weatherprogramm
+### Weatherprogramm
 
     -   [x] Current Weather
         -   [x] Jetzige Temperatur
-    -   [ ] Leiste umwandeln
+    -   [x] Leiste umwandeln
     -   [x] Datum von den Tagen
-    -   [ ] abgerundete Kanten
+    -   [ ] abgerundete Kanten einigen(Ja oder Nein)
 
-    ### Stockticker
+### Stockticker
 
     -   [x] zur Klasse umwandeln
     -   [x] mit relevanten Aktien/Cyrptos füllen

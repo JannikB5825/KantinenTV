@@ -28,10 +28,11 @@ kuerzel ={
     "Sunday" : "So."
 }
 
+#Bilder nochmal überschauen
 weatherColors={
-    2 : "gewitter.jpg", #Gewitter brauch neue Farbe
+    2 : "gewitter.jpg", #Gewitter 
     3 : "regen.jpg", #Nisel regen
-    5 : "regen.jpg", #Regen brauch neue Farbe
+    5 : "regen.jpg", #Regen 
     6 : "schnee.jpg", #Schnee
     7 : "nebel.jpg", #Nebel
     8 : "sonnig.jpg", #Sonnig
