@@ -276,27 +276,11 @@ canvas.create_text(250, 930, text=f'{int(weather[0]//1)}° / {int(weather[1]//1)
 ##############################################################################################################################################
 # ↓ next days
 
-weather[6] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[6]}@2x.png"))
-canvas.create_image(400,950,anchor=NW,image=weather[6])
-canvas.create_text(550, 1000, text=f'{int(weather[4]//1)}° / {int(weather[5]//1)}°', font=("bold", 12))
-
-
-weather[9] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[9]}@2x.png"))
-canvas.create_image(720,950,anchor=NW,image=weather[9])
-canvas.create_text(870, 1000, text=f'{int(weather[7]//1)}° / {int(weather[8]//1)}°', font=("bold", 12))
-
-
-weather[12] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[12]}@2x.png"))
-canvas.create_image(1050,950,anchor=NW,image=weather[12])
-canvas.create_text(1200, 1000, text=f'{int(weather[10]//1)}° / {int(weather[11]//1)}°', font=("bold", 12))
-
-weather[15] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[15]}@2x.png"))
-canvas.create_image(1350,950,anchor=NW,image=weather[15])
-canvas.create_text(1500, 1000, text=f'{int(weather[13]//1)}° / {int(weather[14]//1)}°', font=("bold", 12))
-
-weather[18] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[18]}@2x.png"))
-canvas.create_image(1650,950,anchor=NW,image=weather[18])
-canvas.create_text(1800, 1000, text=f'{int(weather[16]//1)}° / {int(weather[17]//1)}°', font=("bold", 12))
+for x in range(2,7):
+    abstand = (x-2) * 313
+    weather[x*3] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[x*3]}@2x.png"))
+    canvas.create_image(400 + abstand, 960,anchor=NW,image=weather[x*3])
+    canvas.create_text(550 + abstand, 1010, text=f'{int(weather[x*3 - 2]//1)}° / {int(weather[x*3 - 1]//1)}°', font=("bold", 12))
 
 #################################################################################################################################
 # ↓ clock
@@ -318,7 +302,7 @@ canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=("bold", 15))
 
 
 if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
-    canvas.itemconfig(wetter,image=(osPath + "Wetter//" + weatherColors[9]))
+    canvas.itemconfig(wetter,image=ImageTk.PhotoImage(Image.open(osPath + "Wetter//" + weatherColors[9])))
 else:
     basewidth = 700
     newWetterBild = Image.open(osPath + "Wetter//" + weatherColors[currentWeather[3]//100])
