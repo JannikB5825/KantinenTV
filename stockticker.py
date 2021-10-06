@@ -1,6 +1,4 @@
 from tkinter import *
-import time
-import threading
 from random import randint as randint, uniform as randlimit
 import stockAPI
 import ctypes
@@ -40,7 +38,7 @@ class AplicationTkinter(Frame):
                                       self.tag[self.market_one.get_tag()])  # TODO simplify
         self.txt_ticker_widget.see(END)
         self.txt_ticker_widget.configure(state=DISABLED)
-        self.txt_ticker_widget.after(SPEED, self.scroll_ticker)  # recursive each interval of millisecs
+        self.txt_ticker_widget.after(SPEED, self.scroll_ticker)  
 
 
 class StockTicker():
@@ -64,7 +62,6 @@ class StockMarket():
             simple_ticker = StockTicker(data_ticker)
             self.smarket.append(simple_ticker)
 
-
     def get_one_ticker(self):
         self.one_ticker = self.smarket.pop(0)
         self.smarket.append(self.one_ticker)
@@ -81,12 +78,3 @@ class StockMarket():
 
     def get_tag(self):
         return self.one_ticker.direction
-
-#def main():
-#    the_window = Tk()
-#    aplicacion = AplicationTkinter(the_window)
-#    # init the GUI process
-#    the_window.mainloop()
-#
-#if __name__ == '__main__':
-#    main()

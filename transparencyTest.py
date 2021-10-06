@@ -60,7 +60,7 @@ canvas.place(x =0, y = 0)
 
 
 #Load an image in the script
-wetter = canvas.create_image(358,900,anchor="e",image=ImageTk.PhotoImage(Image.open(osPath + "Icon\\Download.png")))
+wetter = canvas.create_image(358,900,anchor="e",image=ImageTk.PhotoImage(Image.open(osPath + "Wetter\\gewitter.jpg")))
 bg_img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
 bg = canvas.create_image(0,0,anchor=NW,image=bg_img)
 titel = canvas.create_text(1130,450, text="", font=('bold 12'), anchor='w')
@@ -261,7 +261,7 @@ currentWeather = get_current()
 dateWeather = get_date()
 articles = get_all_article()
 
-canvas.create_rectangle(4,60,356,780,width = 4,fill = "green")
+canvas.create_rectangle(4,60,356,780,width = 4,fill = "#41b45c")
 logos, tableLogos = getLogos()
 setLogos()
 drawTable()
@@ -302,10 +302,10 @@ canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=("bold", 15))
 
 
 if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
-    canvas.itemconfig(wetter,image=ImageTk.PhotoImage(Image.open(osPath + "Wetter//" + weatherColors[9])))
+    canvas.itemconfig(wetter,image=ImageTk.PhotoImage(Image.open(osPath + "Wetter\\" + weatherColors[9])))
 else:
     basewidth = 700
-    newWetterBild = Image.open(osPath + "Wetter//" + weatherColors[currentWeather[3]//100])
+    newWetterBild = Image.open(osPath + "Wetter\\" + weatherColors[currentWeather[3]//100])
     wpercent = (basewidth/float(newWetterBild.size[0]))
     hsize = int((float(newWetterBild.size[1])*float(wpercent)))
     newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
