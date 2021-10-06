@@ -229,18 +229,18 @@ def addLineBreaks(title, desc, date, publisher):
     for x in titleArr:
         if len(temp+x) > 60:
             back += temp + "\n"
-            temp = ""
+            temp = x
         else:
             temp += x + " "
+    back += temp + "\n\n"
     temp = ""
-    back += "\n"
     for x in descArr:
         if len(temp+x) > 60:
             back += temp + "\n"
-            temp = ""
+            temp = x
         else:
             temp += x + " "
-    back += "\n-" + publisher + " " + date[:10].replace("-",".")
+    back += temp + "\n\n-" + publisher + " " + date[:10].replace("-",".")
     return back
 
 def show_articles(articles):
