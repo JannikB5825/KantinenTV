@@ -14,7 +14,7 @@ import io
 import tkinter.font as TkFont
 import fetcher
 import math
-#import stockticker
+import stockticker
 
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
@@ -69,7 +69,7 @@ root.geometry(screensize)
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-#aplicacion = stockticker.AplicationTkinter(root)
+aplicacion = stockticker.AplicationTkinter(root)
 
 
 #Load an image in the script
@@ -300,9 +300,8 @@ for x in range(2,7):
 #################################################################################################################################
 # ↓ clock
 
-digital_clock_lbl = Label(text="00:00", font=f'bold {font12}')
-clock = canvas.create_text(1900, 0, text=digital_clock_lbl["text"], font=f'bold {font50}', anchor=NE)
-1
+digital_clock_lbl = Label(text="00:00", font=f'ds-digital {font12}')
+clock = canvas.create_text(1900, 0, text=digital_clock_lbl["text"], font=f'ds-digital {font50}', anchor=NE)
 update_clock()
 
 #####################################################################################################################################
@@ -310,11 +309,11 @@ update_clock()
 
 canvas.create_text(178, 33, text="Bundesliga:", font=f'bold {font18}', anchor=CENTER)
 canvas.create_text(165, 835, text="Heute:", font=f'bold {font18}', anchor=CENTER)
-canvas.create_text(500, 945, text="Morgen:", font=f'bold {font15}')
-canvas.create_text(820, 945, text=f'{dateWeather[0]}:', font=f'bold {font15}')
-canvas.create_text(1150, 945, text=f'{dateWeather[1]}:', font=f'bold {font15}')
-canvas.create_text(1450, 945, text=f'{dateWeather[2]}:', font=f'bold {font15}')
-canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=f'bold {font15}')
+canvas.create_text(515, 945, text="Morgen:", font=f'bold {font18}', anchor=CENTER)
+canvas.create_text(828, 945, text=f'{dateWeather[0]}:', font=f'bold {font18}')
+canvas.create_text(1142, 945, text=f'{dateWeather[1]}:', font=f'bold {font18}')
+canvas.create_text(1455, 945, text=f'{dateWeather[2]}:', font=f'bold {font18}')
+canvas.create_text(1763, 945, text=f'{dateWeather[3]}:', font=f'bold {font18}')
 
 if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
     basewidth = 700
