@@ -12,7 +12,7 @@ import os
 import urllib
 import io
 import fetcher
-import stockticker
+#import stockticker
 
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
@@ -59,7 +59,7 @@ root.geometry(screensize)
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-aplicacion = stockticker.AplicationTkinter(root)
+#aplicacion = stockticker.AplicationTkinter(root)
 
 
 #Load an image in the script
@@ -326,5 +326,5 @@ canvas.config(background="#2969ae")
 
 
 root.attributes('-fullscreen', True)
-root.after(1000,lambda: show_articles(articles))
+root.after(10000,lambda: show_articles(articles))
 root.mainloop()
