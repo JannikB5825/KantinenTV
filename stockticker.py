@@ -9,7 +9,7 @@ CHAR_UP = "\u25B2"
 CHAR_DOWN = "\u25BC"
 CHAR_EVEN = "="
 SPEED = 100
-FONTSIZE = 25
+FONTSIZE = 50
 stock_market = stockAPI.get_both(stockAPI.stocks, stockAPI.cryptos)
 
 class AplicationTkinter(Frame):
