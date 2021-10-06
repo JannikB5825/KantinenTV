@@ -74,7 +74,7 @@ distance = 22
 heightOfRow = 18
 
 
-def getTeams():10
+def getTeams():
     tableTeams = []
     for x in range(0,18):
         temp = 80+(distance * x + heightOfRow * x)
