@@ -57,6 +57,8 @@ faktor = normalScreenDPI / dpi
 font12 = int(math.ceil(12*faktor))
 font15 = int(math.ceil(15*faktor))
 font18 = int(math.ceil(18*faktor))
+font25 = int(math.ceil(25*faktor))
+font50 = int(math.ceil(50*faktor))
 
 #Create an instance of tkinter frame
 root = Tk()
@@ -278,12 +280,12 @@ canvas.create_rectangle(4,60,356,780,width = 4,fill = "#41b45c")
 logos, tableLogos = getLogos()
 setLogos()
 drawTable()
-img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
-canvas.create_image(65,850,anchor=NW,image=img2)
-canvas.create_text(260, 880, text=f'{int(currentWeather[2]//1)}°', font=f'bold {font15}')
-canvas.create_text(175, 980, text=currentWeather[0], font=f'bold {font12}')
-canvas.create_text(165, 1050, text='Grünberg', font=f'bold {font12}')
-canvas.create_text(250, 930, text=f'{int(weather[0]//1)}° / {int(weather[1]//1)}°', font=f'bold {font12}')
+#img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
+#canvas.create_image(65,850,anchor=NW,image=img2)
+canvas.create_text(165, 890, text=f'{int(currentWeather[2]//1)}°', font=f'bold {font25}', anchor=CENTER)
+canvas.create_text(165, 1000, text=currentWeather[0], font=f'bold {font15}', anchor=CENTER)
+canvas.create_text(165, 1050, text='Grünberg', font=f'bold {font15}', anchor=CENTER)
+canvas.create_text(165, 950, text=f'{int(weather[0]//1)}° / {int(weather[1]//1)}°', font=f'bold {font15}', anchor=CENTER)
 
 # ↑ current status
 ##############################################################################################################################################
@@ -299,15 +301,15 @@ for x in range(2,7):
 # ↓ clock
 
 digital_clock_lbl = Label(text="00:00", font=f'bold {font12}')
-clock = canvas.create_text(55, 1050, text=digital_clock_lbl["text"], font=f'bold {font12}')
-
+clock = canvas.create_text(1900, 0, text=digital_clock_lbl["text"], font=f'bold {font50}', anchor=NE)
+1
 update_clock()
 
 #####################################################################################################################################
 # ↓ date
 
 canvas.create_text(178, 33, text="Bundesliga:", font=f'bold {font18}', anchor=CENTER)
-canvas.create_text(140, 835, text="Heute:", font=f'bold {font15}')
+canvas.create_text(165, 835, text="Heute:", font=f'bold {font18}', anchor=CENTER)
 canvas.create_text(500, 945, text="Morgen:", font=f'bold {font15}')
 canvas.create_text(820, 945, text=f'{dateWeather[0]}:', font=f'bold {font15}')
 canvas.create_text(1150, 945, text=f'{dateWeather[1]}:', font=f'bold {font15}')
@@ -330,7 +332,7 @@ else:
     newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
     newWetterBild= ImageTk.PhotoImage(newWetterBild)
     canvas.itemconfig(wetter,image=newWetterBild)
-canvas.config(background="#2969ae")
+canvas.config(background="#18c8db")
 
 
 root.attributes('-fullscreen', True)
