@@ -2,6 +2,7 @@ from tkinter import *
 from random import randint as randint, uniform as randlimit
 import stockAPI
 import ctypes
+import math
 
 user32 = ctypes.windll.user32
 CHAR_UP = "\u25B2"
@@ -13,19 +14,20 @@ stock_market = stockAPI.get_both(stockAPI.stocks, stockAPI.cryptos)
 
 class AplicationTkinter(Frame):
 
-    def __init__(self, parent):
+    def __init__(self, parent,faktor):
         Frame.__init__(self, parent)
         self.parent = parent
-        self.initGUI()
+        self.initGUI(faktor)
         self.scroll_ticker()
 
-    def initGUI(self):
+    def initGUI(self,faktor):
         self.frm_1 = Frame(self.parent)
         self.frm_1.place(x=359,y=843)
         self.lblfr_1 = LabelFrame(self.parent)
         self.lblfr_1.place(x=359,y=843)
         self.market_one = StockMarket(stock_market)
-        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=50, wrap="none", font=("bold",FONTSIZE))
+        sizeFont = int(math.ceil(FONTSIZE*faktor))
+        self.txt_ticker_widget = Text(self.lblfr_1, background='black', height=1, width=50, wrap="none", font=("bold",sizeFont))
         self.txt_ticker_widget.pack(side=TOP, fill=X)
         self.txt_ticker_widget.tag_configure("up", foreground="green")
         self.txt_ticker_widget.tag_configure("down", foreground="red")

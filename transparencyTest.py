@@ -69,7 +69,7 @@ root.geometry(screensize)
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-aplicacion = stockticker.AplicationTkinter(root)
+aplicacion = stockticker.AplicationTkinter(root,faktor)
 
 
 #Load an image in the script
@@ -89,7 +89,7 @@ def getTeams():
     tableTeams = []
     for x in range(0,18):
         temp = 80+(distance * x + heightOfRow * x)
-        tableTeams.append(canvas.create_text(50,temp, text="123", font=f'bold {font18}', anchor='w'))
+        tableTeams.append(canvas.create_text(50,temp, text="123", font=f'bold {font18}', anchor='w', fill="white"))
     return tableTeams
         
         
@@ -97,7 +97,7 @@ def getPoints():
     tablePoints = []
     for x in range(0,18):
         temp = 80+(distance * x + heightOfRow * x)
-        tablePoints.append(canvas.create_text(350,temp, text="1", font=f'bold {font18}', anchor='e'))
+        tablePoints.append(canvas.create_text(350,temp, text="1", font=f'bold {font18}', anchor='e', fill="white"))
     return tablePoints
     
     
@@ -229,7 +229,7 @@ def addLineBreaks(title, desc, date, publisher):
     for x in titleArr:
         if len(temp+x) > 60:
             back += temp + "\n"
-            temp = x
+            temp = x + " "
         else:
             temp += x + " "
     back += temp + "\n\n"
@@ -237,7 +237,7 @@ def addLineBreaks(title, desc, date, publisher):
     for x in descArr:
         if len(temp+x) > 60:
             back += temp + "\n"
-            temp = x
+            temp = x + " "
         else:
             temp += x + " "
     back += temp + "\n\n-" + publisher + " " + date[:10].replace("-",".")
@@ -250,15 +250,19 @@ def show_articles(articles):
     if 'None' in nowArticle or None in nowArticle:
         root.after(0,lambda: show_articles(articles))
     else:
-        raw_data = urllib.request.urlopen(nowArticle[4]).read()
-        basewidth = 700
-        newNewsImage = Image.open(io.BytesIO(raw_data))
-        wpercent = (basewidth/float(newNewsImage.size[0]))
-        hsize = int((float(newNewsImage.size[1])*float(wpercent)))
-        newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
-        newNewsImage= ImageTk.PhotoImage(newNewsImage)
-        canvas.itemconfig(newsImage, image = newNewsImage)
-        canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
+        try:
+            raw_data = urllib.request.urlopen(nowArticle[4]).read()
+            basewidth = 700
+            newNewsImage = Image.open(io.BytesIO(raw_data))
+            wpercent = (basewidth/float(newNewsImage.size[0]))
+            hsize = int((float(newNewsImage.size[1])*float(wpercent)))
+            newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
+            newNewsImage= ImageTk.PhotoImage(newNewsImage)
+            canvas.itemconfig(newsImage, image = newNewsImage)
+            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
+        except:
+            print(nowArticle)
+            print("fail")
         root.after(30000,lambda: show_articles(articles))
     
 def drawTable():
@@ -276,7 +280,11 @@ articles = get_all_article()
 for x in benderNews:
     articles.append(x)
 
-canvas.create_rectangle(4,60,356,780,width = 4,fill = "#41b45c")
+image = Image.open(osPath + "Wappen\\Feld.jpg")
+image = image.resize((354, 720), Image.ANTIALIAS)
+my_img = ImageTk.PhotoImage(image)
+#canvas.create_rectangle(4,60,356,780,width = 4,fill = "#41b45c")
+canvas.create_image(4,60, image=my_img, anchor=NW)
 logos, tableLogos = getLogos()
 setLogos()
 drawTable()
