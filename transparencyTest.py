@@ -11,6 +11,7 @@ import ctypes
 import os
 import urllib
 import io
+import tkinter.font as TkFont
 #import stockticker
 
 user32 = ctypes.windll.user32
@@ -46,12 +47,13 @@ app = QApplication(sys.argv)
 screen = app.screens()[0]
 dpi = screen.physicalDotsPerInch()
 app.quit()
-
+print(dpi)
 
 #Create an instance of tkinter frame
 root = Tk()
 root.tk.call('tk', 'scaling', '-displayof', '.', dpi/72.0)
 root.geometry(screensize)
+
 
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
@@ -72,11 +74,11 @@ distance = 22
 heightOfRow = 18
 
 
-def getTeams():
+def getTeams():10
     tableTeams = []
     for x in range(0,18):
         temp = 80+(distance * x + heightOfRow * x)
-        tableTeams.append(canvas.create_text(50,temp, text="123", font=('bold 18'), anchor='w'))
+        tableTeams.append(canvas.create_text(50,temp, text="123", font="bold 29", anchor='w'))
     return tableTeams
         
         
@@ -84,7 +86,7 @@ def getPoints():
     tablePoints = []
     for x in range(0,18):
         temp = 80+(distance * x + heightOfRow * x)
-        tablePoints.append(canvas.create_text(350,temp, text="1", font=('bold 18'), anchor='e'))
+        tablePoints.append(canvas.create_text(350,temp, text="1", font="bold 29", anchor='e'))
     return tablePoints
     
     
