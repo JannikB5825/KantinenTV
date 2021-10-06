@@ -295,7 +295,7 @@ for x in range(2,7):
     abstand = (x-2) * 313
     weather[x*3] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[x*3]}@2x.png"))
     canvas.create_image(400 + abstand, 960,anchor=NW,image=weather[x*3])
-    canvas.create_text(550 + abstand, 1010, text=f'{int(weather[x*3 - 2]//1)}° / {int(weather[x*3 - 1]//1)}°', font=f'bold {font12}')
+    canvas.create_text(550 + abstand, 1010, text=f'{int(weather[x*3 - 2]//1)}° / {int(weather[x*3 - 1]//1)}°', font=f'bold {font18}', anchor=CENTER)
 
 #################################################################################################################################
 # ↓ clock
