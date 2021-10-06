@@ -16,6 +16,7 @@ import io
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
 normalScreenDPI = 157.74020756611984
+faktor = normalScreenDPI / dpi
 95.95804195804195
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -29,7 +30,6 @@ canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheigh
 canvas.place(x =0, y = 0)
 canvas.create_text(0,0,text="test",font="bold 550", anchor=NW)
 
-faktor = dpi / normalScreenDPI
 
 print(dpi)
 root.attributes('-fullscreen', True)

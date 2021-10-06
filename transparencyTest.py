@@ -13,6 +13,7 @@ import urllib
 import io
 import tkinter.font as TkFont
 import fetcher
+import math
 #import stockticker
 
 user32 = ctypes.windll.user32
@@ -50,7 +51,12 @@ app = QApplication(sys.argv)
 screen = app.screens()[0]
 dpi = screen.physicalDotsPerInch()
 app.quit()
-print(dpi)
+
+normalScreenDPI = 157.74020756611984
+faktor = normalScreenDPI / dpi
+font12 = int(math.ceil(12*faktor))
+font15 = int(math.ceil(15*faktor))
+font18 = int(math.ceil(18*faktor))
 
 #Create an instance of tkinter frame
 root = Tk()
@@ -68,7 +74,7 @@ canvas.place(x =0, y = 0)
 wetter = canvas.create_image(358,900,anchor="e",image=ImageTk.PhotoImage(Image.open(osPath + "Wetter\\gewitter.jpg")))
 bg_img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
 bg = canvas.create_image(0,0,anchor=NW,image=bg_img)
-titel = canvas.create_text(1130,450, text="", font=('bold 12'), anchor='w')
+titel = canvas.create_text(1130,450, text="", font=(f'bold {font12}'), anchor='w')
 newNewsImage = ImageTk.PhotoImage(Image.open(osPath + "Icon\\Download.png"))
 newsImage = canvas.create_image(750,450,anchor=CENTER,image=newNewsImage)
 
@@ -81,7 +87,7 @@ def getTeams():
     tableTeams = []
     for x in range(0,18):
         temp = 80+(distance * x + heightOfRow * x)
-        tableTeams.append(canvas.create_text(50,temp, text="123", font="bold 29", anchor='w'))
+        tableTeams.append(canvas.create_text(50,temp, text="123", font=f'bold {font18}', anchor='w'))
     return tableTeams
         
         
@@ -89,7 +95,7 @@ def getPoints():
     tablePoints = []
     for x in range(0,18):
         temp = 80+(distance * x + heightOfRow * x)
-        tablePoints.append(canvas.create_text(350,temp, text="1", font="bold 29", anchor='e'))
+        tablePoints.append(canvas.create_text(350,temp, text="1", font=f'bold {font18}', anchor='e'))
     return tablePoints
     
     
@@ -274,10 +280,10 @@ setLogos()
 drawTable()
 img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
 canvas.create_image(65,850,anchor=NW,image=img2)
-canvas.create_text(260, 880, text=f'{int(currentWeather[2]//1)}°', font=("bold 15"))
-canvas.create_text(175, 980, text=currentWeather[0], font=('bold 12'))
-canvas.create_text(165, 1050, text='Grünberg', font='bold, 12')
-canvas.create_text(250, 930, text=f'{int(weather[0]//1)}° / {int(weather[1]//1)}°', font=("bold", 12))
+canvas.create_text(260, 880, text=f'{int(currentWeather[2]//1)}°', font=f'bold {font15}')
+canvas.create_text(175, 980, text=currentWeather[0], font=f'bold {font12}')
+canvas.create_text(165, 1050, text='Grünberg', font=f'bold {font12}')
+canvas.create_text(250, 930, text=f'{int(weather[0]//1)}° / {int(weather[1]//1)}°', font=f'bold {font12}')
 
 # ↑ current status
 ##############################################################################################################################################
@@ -287,26 +293,26 @@ for x in range(2,7):
     abstand = (x-2) * 313
     weather[x*3] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[x*3]}@2x.png"))
     canvas.create_image(400 + abstand, 960,anchor=NW,image=weather[x*3])
-    canvas.create_text(550 + abstand, 1010, text=f'{int(weather[x*3 - 2]//1)}° / {int(weather[x*3 - 1]//1)}°', font=("bold", 12))
+    canvas.create_text(550 + abstand, 1010, text=f'{int(weather[x*3 - 2]//1)}° / {int(weather[x*3 - 1]//1)}°', font=f'bold {font12}')
 
 #################################################################################################################################
 # ↓ clock
 
-digital_clock_lbl = Label(text="00:00", font=("bold 12"))
-clock = canvas.create_text(55, 1050, text=digital_clock_lbl["text"], font=("bold", 12))
+digital_clock_lbl = Label(text="00:00", font=f'bold {font12}')
+clock = canvas.create_text(55, 1050, text=digital_clock_lbl["text"], font=f'bold {font12}')
 
 update_clock()
 
 #####################################################################################################################################
 # ↓ date
 
-canvas.create_text(178, 33, text="Bundesliga:", font=("bold, 18"), anchor=CENTER)
-canvas.create_text(140, 835, text="Heute:", font=("bold, 15"))
-canvas.create_text(500, 945, text="Morgen:", font=("bold, 15"))
-canvas.create_text(820, 945, text=f'{dateWeather[0]}:', font=("bold", 15))
-canvas.create_text(1150, 945, text=f'{dateWeather[1]}:', font=("bold", 15))
-canvas.create_text(1450, 945, text=f'{dateWeather[2]}:', font=("bold", 15))
-canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=("bold", 15))
+canvas.create_text(178, 33, text="Bundesliga:", font=f'bold {font18}', anchor=CENTER)
+canvas.create_text(140, 835, text="Heute:", font=f'bold {font15}')
+canvas.create_text(500, 945, text="Morgen:", font=f'bold {font15}')
+canvas.create_text(820, 945, text=f'{dateWeather[0]}:', font=f'bold {font15}')
+canvas.create_text(1150, 945, text=f'{dateWeather[1]}:', font=f'bold {font15}')
+canvas.create_text(1450, 945, text=f'{dateWeather[2]}:', font=f'bold {font15}')
+canvas.create_text(1750, 945, text=f'{dateWeather[3]}:', font=f'bold {font15}')
 
 if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
     basewidth = 700
