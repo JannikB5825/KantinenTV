@@ -11,12 +11,15 @@ import ctypes
 import os
 import urllib
 import io
-#import stockticker
+import fetcher
+import stockticker
 
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
 osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
 osPath = osPath.replace("\\","\\")+"\\"
+
+benderNews = fetcher.ArticleFetcher.fetch()
 
 kuerzel ={
     "Monday" : "Mo.",
@@ -56,7 +59,7 @@ root.geometry(screensize)
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-#aplicacion = stockticker.AplicationTkinter(root)
+aplicacion = stockticker.AplicationTkinter(root)
 
 
 #Load an image in the script
@@ -234,7 +237,7 @@ def show_articles(articles):
     global newNewsImage
     nowArticle = articles.pop(0)
     articles.append(nowArticle)
-    if None in nowArticle:
+    if 'None' in nowArticle or None in nowArticle:
         root.after(0,lambda: show_articles(articles))
     else:
         raw_data = urllib.request.urlopen(nowArticle[4]).read()
@@ -246,7 +249,7 @@ def show_articles(articles):
         newNewsImage= ImageTk.PhotoImage(newNewsImage)
         canvas.itemconfig(newsImage, image = newNewsImage)
         canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
-        root.after(5000,lambda: show_articles(articles))
+        root.after(30000,lambda: show_articles(articles))
     
 def drawTable():
     setPoints()
@@ -260,6 +263,8 @@ weather = get_weather()
 currentWeather = get_current()
 dateWeather = get_date()
 articles = get_all_article()
+for x in benderNews:
+    articles.append(x)
 
 canvas.create_rectangle(4,60,356,780,width = 4,fill = "#41b45c")
 logos, tableLogos = getLogos()
@@ -293,6 +298,7 @@ update_clock()
 #####################################################################################################################################
 # ↓ date
 
+canvas.create_text(178, 33, text="Bundesliga:", font=("bold, 18"), anchor=CENTER)
 canvas.create_text(140, 835, text="Heute:", font=("bold, 15"))
 canvas.create_text(500, 945, text="Morgen:", font=("bold, 15"))
 canvas.create_text(820, 945, text=f'{dateWeather[0]}:', font=("bold", 15))
@@ -320,5 +326,5 @@ canvas.config(background="#2969ae")
 
 
 root.attributes('-fullscreen', True)
-root.after(5000,lambda: show_articles(get_all_article()))
+root.after(1000,lambda: show_articles(articles))
 root.mainloop()
