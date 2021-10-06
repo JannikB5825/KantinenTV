@@ -58,7 +58,7 @@ font12 = int(math.ceil(12*faktor))
 font15 = int(math.ceil(15*faktor))
 font18 = int(math.ceil(18*faktor))
 font25 = int(math.ceil(25*faktor))
-font50 = int(math.ceil(50*faktor))
+font100 = int(math.ceil(100*faktor))
 
 #Create an instance of tkinter frame
 root = Tk()
@@ -309,7 +309,7 @@ for x in range(2,7):
 # ↓ clock
 
 digital_clock_lbl = Label(text="00:00", font=f'ds-digital {font12}')
-clock = canvas.create_text(1900, 0, text=digital_clock_lbl["text"], font=f'ds-digital {font50}', anchor=NE)
+clock = canvas.create_text(1900, 0, text=digital_clock_lbl["text"], font=f'ds-digital {font100}', anchor=NE)
 update_clock()
 
 #####################################################################################################################################
