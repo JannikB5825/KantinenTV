@@ -14,7 +14,7 @@ import io
 import tkinter.font as TkFont
 import fetcher
 import math
-import stockticker
+#import stockticker
 
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
@@ -69,7 +69,7 @@ root.geometry(screensize)
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-aplicacion = stockticker.AplicationTkinter(root,faktor)
+#aplicacion = stockticker.AplicationTkinter(root,faktor)
 
 
 #Load an image in the script
@@ -88,7 +88,7 @@ heightOfRow = 18
 def getTeams():
     tableTeams = []
     for x in range(0,18):
-        temp = 80+(distance * x + heightOfRow * x)
+        temp = 110+(distance * x + heightOfRow * x)
         tableTeams.append(canvas.create_text(50,temp, text="123", font=f'bold {font18}', anchor='w', fill="white"))
     return tableTeams
         
@@ -96,7 +96,7 @@ def getTeams():
 def getPoints():
     tablePoints = []
     for x in range(0,18):
-        temp = 80+(distance * x + heightOfRow * x)
+        temp = 110+(distance * x + heightOfRow * x)
         tablePoints.append(canvas.create_text(350,temp, text="1", font=f'bold {font18}', anchor='e', fill="white"))
     return tablePoints
     
@@ -105,7 +105,7 @@ def getLogos():
     logos = []
     tableLogos = []
     for x in range(0,18):
-        temp = 80+(distance * x + heightOfRow * x)
+        temp = 110+(distance * x + heightOfRow * x)
         baseheight = 30
         logos.append(Image.open(osPath + "Wappen\\Augsburg.png"))
         hpercent = (baseheight/float(logos[x].size[1]))
@@ -268,9 +268,9 @@ def show_articles(articles):
 def drawTable():
     setPoints()
     setTeams()
-    canvas.create_rectangle(4,60,45,780,width = 4)
-    canvas.create_rectangle(45,780,300,60,width = 4)
-    canvas.create_rectangle(300,60,356,780,width = 4)
+    canvas.create_rectangle(4,90,45,810,width = 4)
+    canvas.create_rectangle(45,810,300,90,width = 4)
+    canvas.create_rectangle(300,90,357,810,width = 4)
     
     
 weather = get_weather()
@@ -284,7 +284,7 @@ image = Image.open(osPath + "Wappen\\Feld.jpg")
 image = image.resize((354, 720), Image.ANTIALIAS)
 my_img = ImageTk.PhotoImage(image)
 #canvas.create_rectangle(4,60,356,780,width = 4,fill = "#41b45c")
-canvas.create_image(4,60, image=my_img, anchor=NW)
+canvas.create_image(4,90, image=my_img, anchor=NW)
 logos, tableLogos = getLogos()
 setLogos()
 drawTable()
@@ -315,7 +315,7 @@ update_clock()
 #####################################################################################################################################
 # ↓ date
 
-canvas.create_text(178, 33, text="Bundesliga:", font=f'bold {font18}', anchor=CENTER)
+canvas.create_text(178, 40, text="Bundesliga:", font=f'bold {font25}', anchor=CENTER)
 canvas.create_text(165, 835, text="Heute:", font=f'bold {font18}', anchor=CENTER)
 canvas.create_text(515, 945, text="Morgen:", font=f'bold {font18}', anchor=CENTER)
 canvas.create_text(828, 945, text=f'{dateWeather[0]}:', font=f'bold {font18}')
