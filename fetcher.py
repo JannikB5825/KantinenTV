@@ -1,6 +1,6 @@
 import tkinter as tk
 from PIL import ImageTk, Image
-import os
+import sys
 import requests
 from io import BytesIO
 from bs4 import BeautifulSoup
@@ -54,8 +54,7 @@ class ArticleFetcher():
     time.sleep(1)
     r = send_request(url, "jannik.becker", "BenderCoaster5")
     doc = BeautifulSoup(r.text, "html.parser")
-    print(doc)
-    for card in doc.select("tr.ms-itmHoverEnabled "):
+    for card in doc.select("tr.ms-itmHoverEnabled"):
       strong = card.select_one("strong").text
       if "â€‹" in strong:
         strong = "".join(c for c in strong if ord(c)<128)
