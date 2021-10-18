@@ -1,13 +1,11 @@
-import tkinter as tk
-from PIL import ImageTk, Image
 import sys
 import requests
-from io import BytesIO
 from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 import time
-from requests_ntlm import HttpNtlmAuth
 import requests_ntlm
+
+username = None
+password = None
 
 def send_request(url, username, password):
     """
@@ -49,22 +47,33 @@ class ArticleFetcher():
     return articles[:5]
 
   def fetchIntra():
+    global username, password
+    
     url = "https://intra.mybender.com/de"
     articles = [ ]
     time.sleep(1)
-    r = send_request(url, "jannik.becker", "BenderCoaster5")
+    r = send_request(url, username, password)
     doc = BeautifulSoup(r.text, "html.parser")
+    
     for card in doc.select("tr.ms-itmHoverEnabled"):
       strong = card.select_one("strong").text
+      
       if "â€‹" in strong:
         strong = "".join(c for c in strong if ord(c)<128)
       title = card.select_one("p")
+      
       if type(title) != """NoneType""":
         title = title.get_text().replace("\xa0"," ")
         title = "".join(c for c in title if ord(c)<128)[len(strong):]
-      #date = card.select_one("time").text[3:-4]
-      #img = card.select_one("img").get("src")
-      crawled = CrawledFetcher(strong, title, "date", "img")
+      
+      linkToMain = url[:-3] + card.select_one("a").get("href")
+      newR = send_request(linkToMain, username, password)
+      doc = BeautifulSoup(newR.text, "html.parser")
+      for card in doc.select("div.ms-rtestate-field"):
+        image = url[:-3] + card.select_one("img").get("src")
+        date = card.select_one("div.date-line").text
+      
+      crawled = CrawledFetcher(strong, title, date, image)
       articles.append(crawled.selfList())
     return articles
   
