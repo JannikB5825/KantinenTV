@@ -49,17 +49,16 @@ class ArticleFetcher():
     return articles[:5]
 
   def fetchIntra():
-    url = "https://intra.mybender.com/de/"
+    url = "https://intra.mybender.com/de"
     articles = [ ]
     time.sleep(1)
-    #r = requests.get(url,auth=HttpNtlmAuth('domain\\jannik.becker','BenderCoaster5'))
-    with open("intraBender.html") as f:
-      doc = BeautifulSoup(f, "html.parser")
+    r = send_request(url, "jannik.becker", "BenderCoaster5")
+    doc = BeautifulSoup(r.text, "html.parser")
+    print(doc)
     for card in doc.select("tr.ms-itmHoverEnabled "):
       strong = card.select_one("strong").text
       if "â€‹" in strong:
         strong = "".join(c for c in strong if ord(c)<128)
-      content = "content"
       title = card.select_one("p")
       if type(title) != """NoneType""":
         title = title.get_text().replace("\xa0"," ")
