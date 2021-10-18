@@ -4,8 +4,8 @@ from bs4 import BeautifulSoup
 import time
 import requests_ntlm
 
-username = None
-password = None
+username = "jannik.becker"
+password = "BenderCoaster5"
 
 def send_request(url, username, password):
     """
@@ -55,7 +55,12 @@ class ArticleFetcher():
     r = send_request(url, username, password)
     doc = BeautifulSoup(r.text, "html.parser")
     
-    for card in doc.select("tr.ms-itmHoverEnabled"):
+    for card in doc.select("tbody"):
+      strong = "strong"
+      title = "title"
+      date = "date"
+      image = "image"
+      
       strong = card.select_one("strong").text
       
       if "â€‹" in strong:
@@ -66,18 +71,13 @@ class ArticleFetcher():
         title = title.get_text().replace("\xa0"," ")
         title = "".join(c for c in title if ord(c)<128)[len(strong):]
       
-      linkToMain = url[:-3] + card.select_one("a").get("href")
-      newR = send_request(linkToMain, username, password)
-      doc = BeautifulSoup(newR.text, "html.parser")
-      for card in doc.select("div.ms-rtestate-field"):
-        image = url[:-3] + card.select_one("img").get("src")
-        date = card.select_one("div.date-line").text
+      #linkToMain = url[:-3] + card.select_one("a").get("href")
+      #newR = send_request(linkToMain, username, password)
+      #doc = BeautifulSoup(newR.text, "html.parser")
+      #for card in doc.select("div.ms-rtestate-field"):
+      #  image = url[:-3] + card.select_one("img").get("src")
+      #  date = card.select_one("div.date-line").text
       
       crawled = CrawledFetcher(strong, title, date, image)
       articles.append(crawled.selfList())
     return articles
-  
-srticels = ArticleFetcher.fetchIntra()
-for x in srticels:
-  print(x[0])
-  print(x[1])
