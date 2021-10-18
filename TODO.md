@@ -17,7 +17,6 @@
             -   [x] Jetzige Temperatur
         -   [x] Leiste umwandeln
         -   [x] Datum von den Tagen
-        -   [ ] abgerundete Kanten einigen(Ja oder Nein)
 
     ### Stockticker
 
