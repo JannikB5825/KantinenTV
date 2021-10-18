@@ -6,8 +6,19 @@ from io import BytesIO
 from bs4 import BeautifulSoup
 from urllib.parse import urljoin
 import time
-#from requests_ntlm import HttpNtlmAuth
+from requests_ntlm import HttpNtlmAuth
+import requests_ntlm
 
+def send_request(url, username, password):
+    """
+    Sends a request to the url with the credentials specified. Returns the final response
+    """
+    session = requests.Session()
+    session.verify = False
+    session.auth = requests_ntlm.HttpNtlmAuth(username, password)
+    response = session.get(url)
+ 
+    return response
 
 class CrawledFetcher():
   def __init__(self, title, content, date, image):
@@ -41,7 +52,7 @@ class ArticleFetcher():
     url = "https://intra.mybender.com/de/"
     articles = [ ]
     time.sleep(1)
-    r = requests.get(url)
+    #r = requests.get(url,auth=HttpNtlmAuth('domain\\jannik.becker','BenderCoaster5'))
     with open("intraBender.html") as f:
       doc = BeautifulSoup(f, "html.parser")
     for card in doc.select("tr.ms-itmHoverEnabled "):
@@ -59,7 +70,7 @@ class ArticleFetcher():
       articles.append(crawled.selfList())
     return articles
   
-#srticels = ArticleFetcher.fetchIntra()
-#for x in srticels:
-#  print(x[0])
-#  print(x[1])
+srticels = ArticleFetcher.fetchIntra()
+for x in srticels:
+  print(x[0])
+  print(x[1])
