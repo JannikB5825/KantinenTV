@@ -1,0 +1,475 @@
+﻿var _buttonEnabled = { MoveButton: true, EditButton: true, EditCTButton: true, CopyButton: true, AuditButton: true, HelpButton: true };
+var _listHasCTSupport = [];
+
+function isButtonEnabled(cmdId) {
+
+    switch (cmdId) {
+        case 'HelpButton':
+            break;
+        default:
+            setEnabled();
+            break;
+    }
+
+    return _buttonEnabled[cmdId];
+
+}
+
+function getCTSupport(listId) {
+    for (var idx = 0; idx < _listHasCTSupport.length; idx++) {
+        var id = _listHasCTSupport[idx].ListId;
+        if (listId.search(/id/i))
+            return _listHasCTSupport[idx];
+    }
+    return null;
+}
+
+function loadCurrentList() {
+    var currentListGuid = getSelectedList();
+    var ctx = SP.ClientContext.get_current();
+    var web = ctx.get_web();
+    this.list = null;
+
+    if (currentListGuid == null) {
+        var listname = $(".s4-titletext h2 a:first").html(); //requires JQuery to get list name from ribbon breadcrumb
+        list = web.get_lists().getByTitle(listname);
+    } else {
+        list = web.get_lists().getById(currentListGuid);
+    }
+    ctx.load(list);
+    ctx.executeQueryAsync(Function.createDelegate(this, this.onUpdate),
+            Function.createDelegate(this, this.onFail));
+}
+
+function onUpdate(sender, args) {
+    ctSupport = getCTSupport(this.list.get_id().toString());
+    ctSupport.Ready = true;
+    ctSupport.HasSupport = this.list.get_contentTypesEnabled();
+
+}
+
+function onFail(sender, args) {
+    // alert('Failed with Error:'+args.get_message());
+    ctSupport = getCTSupport(this.list.get_id().toString());
+    _listHasCTSupport.splice(_listHasCTSupport.indexOf(ctSupport), 1);
+}
+
+
+function checkCTSupport() {
+
+    var currentListGuid = getSelectedList();
+    var ctSupport = getCTSupport(currentListGuid);
+    if (ctSupport == null) {
+        _listHasCTSupport.push({ ListId: currentListGuid, Ready: false, HasSupport: false });
+        loadCurrentList();
+        return false; //BSB What should the default be while we wait for async result?
+    }
+    else {
+        return ctSupport.HasSupport;
+    }
+
+    return false;
+}
+
+function setEnabled() {
+    var items = getSelectedItems();
+    var hasSelection = (items.length > 0)
+    var hasCTsupport = checkCTSupport();
+    
+    _buttonEnabled['MoveButton'] = hasSelection;
+    _buttonEnabled['EditButton'] = hasSelection;
+    _buttonEnabled['EditCTButton'] = hasSelection && hasCTsupport;
+    _buttonEnabled['CopyButton'] = hasSelection;
+    _buttonEnabled['AuditButton'] = hasSelection;
+}
+
+function guidGenerator() {
+    var S4 = function () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
+    };
+
+    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
+}
+
+function getSiteUrl()
+{
+    var siteUrl = null;
+    if(typeof(SP.ClientContext) == "undefined")
+        siteUrl = SP.PageContextInfo.get_siteAbsoluteUrl();
+    else
+        siteUrl = SP.ClientContext.get_current().get_url();
+
+    if (siteUrl != "/") siteUrl = siteUrl + "/";
+    return siteUrl;
+}
+function postToSession(key, value) {
+    var siteUrl = getSiteUrl();
+    ensureJquery();
+
+    var guid = guidGenerator();
+    
+    //BSB IE 8+ has a JSON object baked in natively.
+    // This throws us off for the SOD which is never triggered because the object is already defined...
+    var loadJSONbySOD = (typeof window["JSON"] == "undefined");
+
+    if (loadJSONbySOD)
+        SP.SOD.registerSod("metalogix.json", siteUrl + vDir("_layouts/Metalogix.Fluent/js/json2.js"));
+
+
+    SP.SOD.execute("metalogix.json", "MetalogixJsonTest", value);
+    SP.SOD.execute("metalogix.jquery", "MetalogixJqueryTest");
+
+    var postFunction = function (valueJSON) {
+        var argValue = valueJSON;
+        SP.SOD.executeOrDelayUntilScriptLoaded(function () {
+           mlgx$.post(siteUrl + vDir('_layouts/Metalogix.Fluent/fluent.ashx?act=write-session&key=') + key + '|' + guid, { args: argValue },
+                    function (data) {; });
+        }, "metalogix.jquery");
+    };
+
+    if (loadJSONbySOD) {
+        SP.SOD.executeOrDelayUntilScriptLoaded(function () {
+            var valueJSON = JSON.stringify(value);
+            postFunction(valueJSON);
+        }, "metalogix.json");
+    }
+    else {
+        var valueJSON = JSON.stringify(value);
+        postFunction(valueJSON);
+    }
+
+    //$.post(siteUrl + '_layouts/Metalogix.Fluent/fluent.ashx?act=write-session&key=' + key + '|' + guid, { args: valueJSON },
+    //       function (data) { ; });
+
+    return key + '|' + guid;
+}
+
+var messageId;
+function getSelectedItems(ctx) {
+    var selection = SP.ListOperation.Selection.getSelectedItems(ctx);
+
+    if ((!selection || selection.length == 0) && typeof (items) !== "undefined") {
+        var res = new Array();
+        for (var i = 0; i < items.length; i++) {
+            if (i in items) {
+                if (items[i].fSelected)
+                    res.push({ fsObjType: "1", id: items[i].id });
+            }
+        }
+        selection = res;
+    }
+
+    //Clean the results removing empty objects...
+    for (var i = 0; i < selection.length; i++) {
+        if (i in selection) {
+            if (!(Number(selection[i].id) > 0))
+                selection.splice(i, 1);
+        }
+    }
+
+    return selection;
+}
+
+function getHighlightedItem() {
+    try {
+        //Standard List\Library Case
+        var currentItemID = GetAttributeFromItemTable(itemTable, "ItemId", "Id");
+        if (!isNaN(Number(currentItemID))) {
+            return { fsObjType: "1", id: currentItemID };
+        }
+        else //fix for #3287
+        {
+            return { fsObjType: "1", id: -1 };
+        }
+
+        //Picture Library Case
+        //if (hilitedRow) {
+        //    var currentItemID = hilitedRow.id.replace("title", "");
+        //    if (!isNaN(Number(currentItemID))) {
+        //        return { fsObjType: "1", id: currentItemID };
+        //    }
+        //}
+    } catch (ex) { alert("launchDialog Failed to detect highlighted item: " + ex); }
+}
+
+function getSelectedList() {
+
+    var listId = SP.ListOperation.Selection.getSelectedList();
+
+    try {
+        if (listId == null) {
+            var temporaryCTX = eval(GetAttributeFromItemTable(itemTable, "CTXName", "CTXName"));
+            listId = temporaryCTX.listName;
+        }
+    } catch (ex) {; }
+
+    try {
+        if (listId == null) {
+            listId = _spPageContextInfo.pageListId;
+        }
+    } catch (ex) {; }
+
+    return listId;
+}
+// Dialog Launching Logic
+function launchDialog(url) {
+
+    //Get the List ID and the selected items  
+    var ctx = SP.ClientContext.get_current();
+    this.web = ctx.get_web();
+
+    var currentItemID = -1;
+    var currentItem = getHighlightedItem();
+
+    var listId = getSelectedList();
+    if (!listId) {
+        alert("launchDialog Failed to detect current list");
+        return;
+    }
+
+    var selectedItems = getSelectedItems(ctx);
+
+    var currentItemIsInSelection = false;
+
+    if (selectedItems && selectedItems.length > 0) {
+
+        for (var i = selectedItems.length - 1; i >= 0; i--) {
+            if (selectedItems[i].id == currentItemID) {
+                currentItemIsInSelection = true;
+                break;
+            }
+        }
+    }
+    if (selectedItems && !currentItemIsInSelection && (currentItemID != null && currentItemID > 0)) //UI has check-boxes but ECB was rendered for a different item...
+        selectedItems.length = 0;
+
+    if (selectedItems && selectedItems.length == 0) //UI working with a single item
+        selectedItems.push(currentItem);
+
+    //Store the id and items in a variable    
+    var args = { listId: listId, items: selectedItems };
+
+    var argKey = postToSession("args", args); //Consider using a cookie for this?
+
+    var options = SP.UI.$create_DialogOptions();
+    if (url.indexOf("?") > 0)
+        options.url = url.replace("?", '?list=' + listId + '&RootFolder=' + GetUrlKeyValue('RootFolder', true) + '&key=' + argKey + "&");
+    else
+        options.url = url + '?list=' + listId + '&RootFolder=' + GetUrlKeyValue('RootFolder', true) + '&key=' + argKey;
+
+    options.allowMaximize = false;
+    options.showMaximized = false;
+    options.autoSize = false;
+    options.width = 860;
+    options.height = 600;
+    options.args = args;
+    options.dialogReturnValueCallback = Function.createDelegate(null, CloseCallback);
+    SP.UI.ModalDialog.showModalDialog(options);
+}
+
+// Dialog callback 
+function CloseCallback(result, target) {
+    SP.UI.ModalDialog.RefreshPage(result);
+}
+
+//ECB Menu Action Support
+//BSB 2013 Hack to "fix" new call-out built-in launch logic "unchecking" all but the current item.  
+// Done in order to support working with multiple items as a batch...
+ExecuteOrDelayUntilScriptLoaded(function () {
+    OpenCalloutAndSelectItem = Custom_OpenCalloutAndSelectItem;
+}, "SP.core.js");
+
+function Custom_OpenCalloutAndSelectItem(launchPoint, curEvent, node, listItemID) {
+    var elmTr = GetAncestor(launchPoint, "TR");
+
+    //    SingleItemSelectInternal(curEvent, false, elmTr, false);
+    SingleItemSelectInternal(curEvent, false, elmTr, true);
+    OpenCallout(launchPoint, curEvent, node, listItemID);
+    cancelDefault(curEvent);
+}
+
+//If other feature has these two functions defined, save them and execute them in our own function.
+var Custom_AddDocLibMenuItems_ContentMatrix_Other;
+if (typeof (Custom_AddDocLibMenuItems) != "undefined")
+    Custom_AddDocLibMenuItems_ContentMatrix_Other = Custom_AddDocLibMenuItems;
+
+var Custom_AddListMenuItems_ContentMatrix_Other;
+if (typeof (Custom_AddListMenuItems) != "undefined")
+    Custom_AddListMenuItems_ContentMatrix_Other = Custom_AddListMenuItems;
+
+Custom_AddDocLibMenuItems = Custom_ContentMatrix_Doc_MenuItems;
+Custom_AddListMenuItems = Custom_ContentMatrix_List_MenuItems;
+
+function Custom_ContentMatrix_Doc_MenuItems(m, ctx) {
+    Custom_MenuItems(m, ctx);
+
+    if (typeof (Custom_AddDocLibMenuItems_ContentMatrix_Other) != "undefined")
+        Custom_AddDocLibMenuItems_ContentMatrix_Other(m, ctx);
+}
+
+function Custom_ContentMatrix_List_MenuItems(m, ctx) {
+    Custom_MenuItems(m, ctx);
+
+    if (typeof (Custom_AddListMenuItems_ContentMatrix_Other) != "undefined")
+        Custom_AddListMenuItems_ContentMatrix_Other(m, ctx);
+}
+
+function Custom_MenuItems(m, ctx) {
+
+    //BSB Trim the ECB menu when the Ribbon has been trimmed...
+    if (typeof (_showClassifyRibbon) == "undefined")
+        return false;
+   
+    if (!_showClassifyRibbon)
+        return false;
+
+    var currentItemIsInSelection = false;
+    var currentItemID = -1;
+    try {
+        currentItemID = getHighlightedItem().id;
+    } catch (ex) { alert("Selection ECB Menu Generation Failed to detect highlighted item: " + ex); }
+
+    var items = getSelectedItems(ctx);
+
+    if (items && items.length > 0) {
+
+        for (var i = items.length - 1; i >= 0; i--) {
+            if (items[i].id == currentItemID) {
+                currentItemIsInSelection = true;
+                break;
+            }
+        }
+    }
+    var selectionString = currentItemIsInSelection ? "Selection" : "Item";
+
+    if (!currentItemIsInSelection && currentItemID == -1)
+        return false; //Render the automatically generated menu...
+
+    var menuItem = CASubM(m, "Manage " + selectionString, ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/Images/logo16x16.png"))
+    //var menuItem = m;
+    CAMOpt(menuItem, "Copy", "ceip('Usage.Layouts.Clicks.ECB.CopyCmd');launchDialog('" + ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/MultiMove.aspx?act=copy');"), ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/Images/cmdCopy16x16.png"));
+    CAMOpt(menuItem, "Move", "ceip('Usage.Layouts.Clicks.ECB.MoveCmd');launchDialog('" + ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/MultiMove.aspx');"), ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/Images/cmdMove16x16.png"));
+    CAMOpt(menuItem, "Apply Metadata", "ceip('Usage.Layouts.Clicks.ECB.ApplyMetadataCmd');launchDialog('" + ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/MultiEdit.aspx');"), ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/Images/cmdClassify16x16.png"));
+    CAMOpt(menuItem, "Move/Copy Action History", "ceip('Usage.Layouts.Clicks.ECB.HistoryCmd');launchDialog('" + ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/Audit.aspx',true);"), ctx.HttpRoot + vDir("/_layouts/Metalogix.Fluent/Images/cmdHistory16x16.png"));
+
+    CAMSep(m); // separator
+
+    return false; // render the default menu items too
+}
+
+function navTo(link) {
+        window.location.href = link;
+}
+
+var mlgx$ = null;
+function ensureJquery() {
+    var isJquery = !(typeof ($) === "undefined");
+    var isExpectedVersion = (isJquery && jQuery.fn.jquery == "1.6.2");
+
+    if (isJquery && isExpectedVersion) mlgx$ = $;
+    if (mlgx$) return;
+
+    var siteUrl = getSiteUrl();
+
+    //Lazy-Load JQuery and post the args seperately for Server consumption ...
+    SP.SOD.registerSod("metalogix.jquery", siteUrl + vDir("_layouts/Metalogix.Fluent/js/jquery-1.6.2.min.js"));
+    SP.SOD.executeOrDelayUntilScriptLoaded(function () {
+        try {
+            if (isJquery && !isExpectedVersion) //Revert to existing jquery copy if necessary so we don't break the host page...
+                mlgx$ = jQuery.noConflict();
+            else
+                mlgx$ = $;
+        } catch (e) { /*Do Nothing - just eat errors...*/ }
+    }, "metalogix.jquery");
+
+}
+function ceip(feature) {
+    try {
+        var siteUrl = getSiteUrl();
+        var req = new XMLHttpRequest();
+        req.open('POST', siteUrl + vDir('_layouts/Metalogix.Fluent/fluent.ashx?act=ceip&f=') + feature, false);
+        req.send(null);
+    }
+    catch (e) { /*Do Nothing - just eat CEIP errors...*/ }
+}
+
+// BSB This approach may return the last script found rather than a precise match.
+// This is "okay" for our use because all we want is a safe place to issue a "head" request and get some headers back.
+var scriptUrl = (function() {
+    if (document.currentScript) { // support defer & async (mozilla only)
+        return document.currentScript.src;
+    } else {
+        var scriptFilename = 'fluentribbonui.js';
+        var ls = document.getElementsByTagName('script');
+        var i, l = ls.length, nf, s;
+        for (i = 0; i < l; i++) {
+            s = null;
+            s = ls[i].getAttribute('src');
+            if (!s) continue; // tag with no src
+            nf = s;
+            nf = nf.split('?')[0].split('/').pop(); // get script filename
+            if (nf === scriptFilename) {
+                break;
+            }
+        }
+                
+        if ( s ) return s;
+    }
+    return '';
+})();
+
+
+                                                                                                
+//SharePoint Version Check
+var _is2010 = null;
+var _is2013 = null;
+var _is2016 = null;
+function getVersion() {
+
+    //Check the HTTP header MicrosoftSharePointTeamServices for the SharePoint version...
+    var req = new XMLHttpRequest();
+    var siteUrl = scriptUrl;
+    req.open('HEAD', siteUrl, false);
+    //req.open('HEAD', document.location, false);
+    req.send(null);
+
+    var spVersion = req.getResponseHeader("MicrosoftSharePointTeamServices");
+    if (spVersion) {
+        _is2010 = (spVersion.indexOf("14") == 0);
+        _is2013 = (spVersion.indexOf("15") == 0);
+        _is2016 = (spVersion.indexOf("16") == 0);
+    }
+}
+
+function is2010() {
+    if (_is2010 == null) {
+        getVersion();
+    }
+    return _is2010;
+}
+
+function is2013() {
+    if (_is2013 == null) {
+        getVersion();
+    }
+    return _is2013;
+}
+
+function is2016() {
+    if (_is2016 == null) {
+        getVersion();
+    }
+    return _is2016;
+}
+
+function vDir(path) {
+    //In SP2016, the layouts folder is in 15 hive folder only
+    //TODO: At the time of SP2016 RTM, might be the hive will be changed from 15 to 16. 
+    //For that make changes in the condition of getting vPath. Currently the condition is if is2013 or is2016 then it will get path from 15 hive only
+    //If the hive folder will change for SP2016 then condition should be modified. For SP2016 get path from 16 hive folder.
+    
+    var vPath = path;
+    if (path)
+        vPath = path.replace(/layouts\/Metalogix/i, "layouts" + (is2013() || is2016() ? "/15/Metalogix" : "/Metalogix"));
+    return vPath;
+}

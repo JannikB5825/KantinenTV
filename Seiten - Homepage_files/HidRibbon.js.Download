@@ -1,0 +1,113 @@
+﻿window.Bender_Ribbon_Design =
+{
+    RibbonTopBar:
+    {
+        RibbonToggleKeys: "",
+        Hide: function () {
+            // Hide ribbon top bar
+            $('#s4-ribbonrow').hide();
+            $('#suiteBar').hide();
+
+            // Set visibility of title bar ...
+            // ... show title bar if hidden
+            var titleRow = $('#s4-titlerow');
+            if (titleRow.css("display") == "none") {
+                titleRow.show();
+            }
+
+            // Adjust height of content section
+            var contentSection = $('#s4-workspace');
+            var viewportHeight = GetViewportHeight(); // SharePoint default function in init.js
+            if (contentSection.height() != viewportHeight) {
+                contentSection.height(viewportHeight);
+            }
+        },
+        Show: function () {
+            // Show ribbon top bar
+            var ribbonRow = $('#s4-ribbonrow');
+            ribbonRow.show();
+            var suiteBarRow = $('#suiteBar');
+            suiteBarRow.show();
+
+            // Set visibility of title bar (if the browse tab exists on the current page) ...
+            // ... show title bar if "Browse" Tab is currently selected
+            // ... hide title bar if any other Tab is currently selected
+            var browseTab = $('.ms-browseTab');
+            if (browseTab.length > 0) {
+                if (browseTab.hasClass('ms-cui-tt-s')) {
+                    $('#s4-titlerow').show();
+                }
+                else {
+                    $('#s4-titlerow').hide();
+                }
+            }
+
+            // Adjust height of content section
+            $('#s4-workspace').height($(document).height() - (2 * ribbonRow.height()));
+        },
+        RegisterShortcut: function (e) {
+            // Makes use of JavaScript Variable "RibbonToggleKeys" that must exist in the current page
+            if (RibbonToggleKeys != undefined) {
+                if (e.keyCode == 17) {
+                    // Ctrl-Key pressed ...
+                    // ... remember that the key has been pressed
+                    RibbonToggleKeys = "ctrl";
+                    return false;
+                }
+                else if (e.keyCode == 16) {
+                    // Shift-Key pressed
+                    if (RibbonToggleKeys == "ctrl") {
+                        // If the Ctrl-Key has already been pressed ...
+                        // ... remember that the Shift-Key has also been pressed
+                        RibbonToggleKeys += "shift";
+                        return false;
+                    }
+                }
+                else if (e.keyCode == 88) {
+                    // x-Key pressed
+                    if (RibbonToggleKeys == "ctrlshift") {
+                        // If the Ctrl-Key and the Shift-Key has already been pressed ...
+                        // ... clear the shortcut management variable and show or hide the ribbon bar
+
+                        RibbonToggleKeys = "";
+                        if ($('#s4-ribbonrow').css('display') == "none" || $('#suiteBar').css('display') == "none") {
+                            Bender_Ribbon_Design.RibbonTopBar.Show();
+                        }
+                        else {
+                            Bender_Ribbon_Design.RibbonTopBar.Hide();
+                        }
+                        suiteBar
+                        return false;
+                    }
+                }
+                else {
+                    RibbonToggleKeys = "";
+                }
+
+                return true;
+            }
+            return false;
+        },
+        Timer: function () {
+            if ($("div#pageStatusBar").children().length == 0) {
+                window.setTimeout(Bender_Ribbon_Design.RibbonTopBar.Timer, 50);
+            }
+            else {
+                Bender_Ribbon_Design.RibbonTopBar.Show();
+            }
+        }
+    },
+    SP:
+    {
+        GetRelativeUrl: function () {
+            var ctx = SP.ClientContext.get_current();
+
+            var relativeURL = ctx.get_url();
+            if (relativeURL.length > 1) {
+                relativeURL += "/";
+            }
+
+            return relativeURL;
+        }
+    }
+};
