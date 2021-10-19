@@ -21,7 +21,7 @@ screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics
 osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
 osPath = osPath.replace("\\","\\")+"\\"
 
-benderNews = fetcher.ArticleFetcher.fetch()
+benderNews = fetcher.getBothDates()
 
 kuerzel ={
     "Monday" : "Mo.",
@@ -249,9 +249,21 @@ def show_articles(articles):
     articles.append(nowArticle)
     if 'None' in nowArticle or None in nowArticle:
         root.after(0,lambda: show_articles(articles))
-    else:
+    elif "Bender123" in nowArticle[4]:
         try:
-            raw_data = urllib.request.urlopen(nowArticle[4]).read()
+            basewidth = 700
+            newNewsImage = Image.open(osPath + "//Icon//myBender.png")
+            wpercent = (basewidth/float(newNewsImage.size[0]))
+            hsize = int((float(newNewsImage.size[1])*float(wpercent)))
+            newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
+            newNewsImage= ImageTk.PhotoImage(newNewsImage)
+            canvas.itemconfig(newsImage, image = newNewsImage)
+            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],"Bender"))
+        except:
+            None
+    elif "intra.mybender" in nowArticle[4]:
+        try:
+            raw_data = fetcher.send_request(nowArticle[4]).content
             basewidth = 700
             newNewsImage = Image.open(io.BytesIO(raw_data))
             wpercent = (basewidth/float(newNewsImage.size[0]))
@@ -263,7 +275,21 @@ def show_articles(articles):
         except:
             print(nowArticle)
             print("fail")
-        root.after(30000,lambda: show_articles(articles))
+    else:
+        try:
+            raw_data = fetcher.send_request(nowArticle[4]).read()
+            basewidth = 700
+            newNewsImage = Image.open(io.BytesIO(raw_data))
+            wpercent = (basewidth/float(newNewsImage.size[0]))
+            hsize = int((float(newNewsImage.size[1])*float(wpercent)))
+            newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
+            newNewsImage= ImageTk.PhotoImage(newNewsImage)
+            canvas.itemconfig(newsImage, image = newNewsImage)
+            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
+        except:
+            print(nowArticle)
+            print("fail")
+    root.after(30000,lambda: show_articles(articles))
     
 def drawTable():
     setPoints()
@@ -276,7 +302,8 @@ def drawTable():
 weather = get_weather()
 currentWeather = get_current()
 dateWeather = get_date()
-articles = get_all_article()
+articles = []
+###articles = get_all_article()
 for x in benderNews:
     articles.append(x)
 

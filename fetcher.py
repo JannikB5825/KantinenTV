@@ -13,10 +13,11 @@ password = "BenderCoaster5"
 def disable_warnings(): 
   urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-def send_request(url, username, password):
+def send_request(url):
     """
     Sends a request to the url with the credentials specified. Returns the final response
     """
+    global username, password
     disable_warnings()
     session = requests.Session()
     session.verify = False
@@ -29,7 +30,7 @@ class CrawledFetcher():
   def __init__(self, title, content, date, image):
     self.title = title
     self.content = content
-    self.author = "Bender"
+    self.author = "Bender123"
     self.date = date
     self.image = image
   def selfList(self):
@@ -50,52 +51,55 @@ class ArticleFetcher():
       title = card.select_one("a").get("title")
       date = card.select_one("time").text[3:-4]
       img = card.select_one("img").get("src")
+      if img == None:
+        img = "Bender123"
       crawled = CrawledFetcher(title, content, date, img)
       articles.append(crawled.selfList())
     return articles[:5]
 
   def fetchIntra():
-    global username, password
-    
+
     disable_warnings()
     url = "https://intra.mybender.com"
     articles = [ ]
     time.sleep(1)
-    r = send_request(url, username, password)
+    r = send_request(url)
     doc = BeautifulSoup(r.text, "html.parser")
     
     main_body = doc.find_all("tbody")[1]
     for card in main_body.find_all("tr")[1].find_all("tr")[1:]:
-      date = "date"
+      img = "Bender123"
       title = card.get_text()
       strong = card.select_one("strong").text
-      img = "Bender"
       date = card.find("nobr").text[:-6]
+      title = title[len(strong)+16:]
+      
+      
+      if type(title) != """NoneType""":
+        title = "".join(c for c in title if ord(c)<128)
+        title = title.replace("\xa0"," ")
+        title = title.replace("\u200b","")
+        
       if type(strong) != """NoneType""":
         strong = "".join(c for c in strong if ord(c)<128)
         strong = strong.replace("\u200b","")
-      
-      if type(title) != """NoneType""":
-        title = title.replace("\xa0"," ")
-        title = title.replace("\u200b","")
-        title = "".join(c for c in title if ord(c)<128)[len(strong)-1:]
-      
+
       linkToMain = re.findall(r'"([^"]*)"', str(card.find("a")))
       if len(linkToMain) > 0:
         if linkToMain[0][0] != "/":
-          linkToMain = "Bender"
+          linkToMain = "Bender123"
         else:
           linkToMain = url + linkToMain[0]
-          newR = send_request(linkToMain, username, password)
+          newR = send_request(linkToMain)
           newDoc = BeautifulSoup(newR.text, "html.parser")
           imageMain = newDoc.find("div", {"class": "ms-rtestate-field"})
           img = imageMain.select_one("img").get("src")
           if img[:3] == "/de":
             img = url + img
           else:
-            img = "Bender"
+            img = "Bender123"
       else:
-        linkToMain = "Bender"
+        linkToMain = "Bender123"
       
       crawled = CrawledFetcher(strong, title, date, img)
       articles.append(crawled.selfList())
@@ -106,4 +110,5 @@ def getBothDates():
   list2 = ArticleFetcher.fetchIntra()
   joined = list1 + list2
   joined.sort(key=lambda date: datetime.strptime(date[3], "%d.%m.%Y"))
-  return joined.reverse()
+  joined.reverse()
+  return joined
