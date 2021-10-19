@@ -3,14 +3,20 @@ import requests
 from bs4 import BeautifulSoup
 import time
 import requests_ntlm
+import urllib3
+import re
 
 username = "jannik.becker"
 password = "BenderCoaster5"
+
+def disable_warnings(): 
+  urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 def send_request(url, username, password):
     """
     Sends a request to the url with the credentials specified. Returns the final response
     """
+    disable_warnings()
     session = requests.Session()
     session.verify = False
     session.auth = requests_ntlm.HttpNtlmAuth(username, password)
@@ -32,6 +38,7 @@ class CrawledFetcher():
 class ArticleFetcher():
   #bender.de  
   def fetch():
+    disable_warnings()
     url = "https://www.bender.de/unternehmen/news"
     articles = [ ]
     time.sleep(1)
@@ -49,35 +56,59 @@ class ArticleFetcher():
   def fetchIntra():
     global username, password
     
-    url = "https://intra.mybender.com/de"
+    disable_warnings()
+    url = "https://intra.mybender.com"
     articles = [ ]
     time.sleep(1)
     r = send_request(url, username, password)
     doc = BeautifulSoup(r.text, "html.parser")
     
-    for card in doc.select("tbody"):
-      strong = "strong"
-      title = "title"
+    main_body = doc.find_all("tbody")[1]
+    for card in main_body.find_all("tr")[1].find_all("tr")[1:]:
       date = "date"
-      image = "image"
-      
+      title = card.get_text()
       strong = card.select_one("strong").text
-      
-      if "â€‹" in strong:
+      img = "Bender"
+      date = card.find("nobr").text[:-6]
+      if type(strong) != """NoneType""":
         strong = "".join(c for c in strong if ord(c)<128)
-      title = card.select_one("p")
+        strong = strong.replace("\u200b","")
       
       if type(title) != """NoneType""":
-        title = title.get_text().replace("\xa0"," ")
-        title = "".join(c for c in title if ord(c)<128)[len(strong):]
+        title = title.replace("\xa0"," ")
+        title = title.replace("\u200b","")
+        title = "".join(c for c in title if ord(c)<128)[len(strong)-1:]
       
-      #linkToMain = url[:-3] + card.select_one("a").get("href")
-      #newR = send_request(linkToMain, username, password)
-      #doc = BeautifulSoup(newR.text, "html.parser")
-      #for card in doc.select("div.ms-rtestate-field"):
-      #  image = url[:-3] + card.select_one("img").get("src")
-      #  date = card.select_one("div.date-line").text
+      linkToMain = re.findall(r'"([^"]*)"', str(card.find("a")))
+      if len(linkToMain) > 0:
+        if linkToMain[0][0] != "/":
+          linkToMain = "Bender"
+        else:
+          linkToMain = url + linkToMain[0]
+          newR = send_request(linkToMain, username, password)
+          newDoc = BeautifulSoup(newR.text, "html.parser")
+          imageMain = newDoc.find("div", {"class": "ms-rtestate-field"})
+          img = imageMain.select_one("img").get("src")
+          if img[:3] == "/de":
+            img = url + img
+          else:
+            img = "Bender"
+      else:
+        linkToMain = "Bender"
       
-      crawled = CrawledFetcher(strong, title, date, image)
+      crawled = CrawledFetcher(strong, title, date, img)
       articles.append(crawled.selfList())
     return articles
+  
+def test():
+  global username, password
+  
+  url = "https://intra.mybender.com/de/"
+  articles = [ ]
+  time.sleep(1)
+  r = send_request(url, username, password)
+  doc = BeautifulSoup(r.text, "html.parser")
+  print(doc.find_all("tbody")[1].find_all("tr"))
+
+for x in ArticleFetcher.fetchIntra():
+  print(x)
