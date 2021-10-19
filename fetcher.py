@@ -5,6 +5,7 @@ import time
 import requests_ntlm
 import urllib3
 import re
+from datetime import datetime
 
 username = "jannik.becker"
 password = "BenderCoaster5"
@@ -99,16 +100,10 @@ class ArticleFetcher():
       crawled = CrawledFetcher(strong, title, date, img)
       articles.append(crawled.selfList())
     return articles
-  
-def test():
-  global username, password
-  
-  url = "https://intra.mybender.com/de/"
-  articles = [ ]
-  time.sleep(1)
-  r = send_request(url, username, password)
-  doc = BeautifulSoup(r.text, "html.parser")
-  print(doc.find_all("tbody")[1].find_all("tr"))
 
-for x in ArticleFetcher.fetchIntra():
-  print(x)
+def getBothDates():
+  list1 = ArticleFetcher.fetch()
+  list2 = ArticleFetcher.fetchIntra()
+  joined = list1 + list2
+  joined.sort(key=lambda date: datetime.strptime(date[3], "%d.%m.%Y"))
+  return joined.reverse()
