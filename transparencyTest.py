@@ -21,7 +21,6 @@ screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics
 osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
 osPath = osPath.replace("\\","\\")+"\\"
 
-benderNews = fetcher.getBothDates()
 
 kuerzel ={
     "Monday" : "Mo.",
@@ -44,7 +43,7 @@ weatherColors={
     9 : "wolcken.jpg" #Wolken
 }
 
-
+changeSpeed = 5000
 
 
 app = QApplication(sys.argv)
@@ -244,7 +243,7 @@ def addLineBreaks(title, desc, date, publisher):
     return back
 
 def show_articles(articles):
-    global newNewsImage
+    global newNewsImage, changeSpeed
     nowArticle = articles.pop(0)
     articles.append(nowArticle)
     if 'None' in nowArticle or None in nowArticle:
@@ -252,7 +251,7 @@ def show_articles(articles):
     elif "Bender123" in nowArticle[4]:
         try:
             basewidth = 700
-            newNewsImage = Image.open(osPath + "//Icon//myBender.png")
+            newNewsImage = Image.open(osPath + "//Icon//myBender.jpg")
             wpercent = (basewidth/float(newNewsImage.size[0]))
             hsize = int((float(newNewsImage.size[1])*float(wpercent)))
             newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
@@ -261,6 +260,7 @@ def show_articles(articles):
             canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],"Bender"))
         except:
             None
+        
     elif "intra.mybender" in nowArticle[4]:
         try:
             raw_data = fetcher.send_request(nowArticle[4]).content
@@ -271,13 +271,14 @@ def show_articles(articles):
             newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
             newNewsImage= ImageTk.PhotoImage(newNewsImage)
             canvas.itemconfig(newsImage, image = newNewsImage)
-            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
+            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],"Bender"))
         except:
             print(nowArticle)
             print("fail")
+        root.after(changeSpeed,lambda: show_articles(articles))
     else:
         try:
-            raw_data = fetcher.send_request(nowArticle[4]).read()
+            raw_data = urllib.request.urlopen(nowArticle[4]).read()
             basewidth = 700
             newNewsImage = Image.open(io.BytesIO(raw_data))
             wpercent = (basewidth/float(newNewsImage.size[0]))
@@ -289,8 +290,8 @@ def show_articles(articles):
         except:
             print(nowArticle)
             print("fail")
-    root.after(30000,lambda: show_articles(articles))
-    
+        root.after(changeSpeed,lambda: show_articles(articles))
+
 def drawTable():
     setPoints()
     setTeams()
@@ -302,10 +303,12 @@ def drawTable():
 weather = get_weather()
 currentWeather = get_current()
 dateWeather = get_date()
-articles = []
-###articles = get_all_article()
-for x in benderNews:
-    articles.append(x)
+benderNews = fetcher.getBothDates()
+articles = get_all_article()
+spacing = len(articles) / len(benderNews)
+
+for x in range(1,len(benderNews)+1):
+    articles.insert(int(x*spacing)+x, benderNews[x-1])
 
 image = Image.open(osPath + "Wappen\\Feld.jpg")
 image = image.resize((354, 720), Image.ANTIALIAS)
@@ -370,5 +373,5 @@ canvas.config(background="#18c8db")
 
 
 root.attributes('-fullscreen', True)
-root.after(10000,lambda: show_articles(articles))
+root.after(5000,lambda: show_articles(articles))
 root.mainloop()
