@@ -44,7 +44,7 @@ weatherColors={
 }
 
 changeSpeed = 1000
-
+toggle = False
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -115,6 +115,10 @@ def getLogos():
     return logos, tableLogos
 
 
+teams = getTeams()
+points = getPoints()
+logos = getLogos()
+
 def get_weather():
     url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
     result = requests.get(url, verify=False)
@@ -131,7 +135,6 @@ def get_weather():
 
 
 def get_current():
-    time.sleep(1)
     url = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
     result = requests.get(url, verify=False)
     if result:
@@ -145,7 +148,6 @@ def get_current():
 def get_date():
     global kuerzel
     url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
-    time.sleep(1)
     result = requests.get(url, verify=False)
     if result:
         json = json_.loads(result.text)
@@ -183,28 +185,29 @@ def get_all_article():
     
 
 def setTeams():
+    global teams
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
     time.sleep(1)
     result = requests.get(url3, verify=False)
-    tableTeams = getTeams()
     if result:
         json = json_.loads(result.text)
         for i in range(0,18):
-            canvas.itemconfig(tableTeams[i], text = json[i]["shortName"])
+            canvas.itemconfig(teams[i], text = json[i]["shortName"])
 
 
 def setPoints():
+    global points
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
     time.sleep(1)
     result = requests.get(url3, verify=False)
-    tablePoints = getPoints()
     if result:
         json = json_.loads(result.text)
         for i in range(0,18):
-            canvas.itemconfig(tablePoints[i], text = json[i]["points"])
+            canvas.itemconfig(points[i], text = json[i]["points"])
             
 
 def setLogos():
+    global logos
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
     time.sleep(1)
     result = requests.get(url3, verify=False)
@@ -218,7 +221,43 @@ def setLogos():
             hsize = int((float(logos[i].size[0])*float(wpercent)))
             logos[i] = logos[i].resize((hsize,baseheight), Image.ANTIALIAS)
             logos[i]= ImageTk.PhotoImage(logos[i])
-            canvas.itemconfig(tableLogos[i], image = logos[i])
+            canvas.itemconfig(logos[i], image = logos[i])
+            
+def setSpieltag():
+    global teams, points, logos
+    url = 'https://api.openligadb.de/getmatchdata/bl1'
+    time.sleep(1)
+    result = requests.get(url, verify=False)
+    if result:
+        json = json_.loads(result.text)
+        seasonJahr = json[0]["leagueSeason"]
+        spieltag = json[0]['group']["groupOrderID"]
+        if spieltag == 1:
+            spieltag = 34
+            seasonJahr -= 1
+        else:
+            spieltag -= 1
+    url += f"/{seasonJahr}/{spieltag}"
+    time.sleep(1)
+    result = requests.get(url, verify=False)
+    if result:
+        json = json_.loads(result.text)
+        for x in range(0,9):
+            canvas.itemconfig(teams[2*x], text = json[x]["team1"]["shortName"])
+            canvas.itemconfig(teams[2*x+1], text = json[x]["team2"]["shortName"])
+            for y in range(0,2):
+                baseheight = 32
+                logoName = json[y][f"team{y+1}"]["shortName"]
+                logos[2*x+y] = Image.open(osPath + f"Wappen\\{logoName}.png")
+                wpercent = (baseheight/float(logos[2*x+y].size[1]))
+                hsize = int((float(logos[2*x+y].size[0])*float(wpercent)))
+                logos[2*x+y] = logos[2*x+y].resize((hsize,baseheight), Image.ANTIALIAS)
+                logos[2*x+y]= ImageTk.PhotoImage(logos[2*x+y])
+                canvas.itemconfig(logos[2*x+y], image = logos[2*x+y])
+            canvas.itemconfig(points[2*x], text = json[x]["matchResults"][0]["pointsTeam1"])
+            canvas.itemconfig(points[2*x+1], text = json[x]["matchResults"][0]["pointsTeam2"])
+        
+
 
 def addLineBreaks(title, desc, date, publisher):
     titleArr = title.split()
@@ -316,11 +355,10 @@ image = image.resize((354, 720), Image.ANTIALIAS)
 my_img = ImageTk.PhotoImage(image)
 #canvas.create_rectangle(4,60,356,780,width = 4,fill = "#41b45c")
 canvas.create_image(4,90, image=my_img, anchor=NW)
-logos, tableLogos = getLogos()
 setLogos()
 drawTable()
-#img2 = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{currentWeather[1]}@2x.png"))
-#canvas.create_image(65,850,anchor=NW,image=img2)
+setSpieltag()
+
 canvas.create_text(165, 890, text=f'{int(currentWeather[2]//1)}°', font=f'bold {font25}', anchor=CENTER)
 canvas.create_text(165, 1000, text=currentWeather[0], font=f'bold {font15}', anchor=CENTER)
 canvas.create_text(165, 1050, text='Grünberg', font=f'bold {font15}', anchor=CENTER)

@@ -98,7 +98,8 @@ class ArticleFetcher():
           newR = send_request(linkToMain)
           newDoc = BeautifulSoup(newR.text, "html.parser")
           imageMain = newDoc.find("div", {"class": "ms-rtestate-field"})
-          img = imageMain.select_one("img").get("src")
+          if type(imageMain) != """NoneType""":
+            img = imageMain.select_one("img").get("src")
           if img[:3] == "/de":
             img = url + img
           else:
