@@ -310,7 +310,6 @@ spacing = len(articles) / len(benderNews)
 for x in range(1,len(benderNews)+1):
     articles.insert(int(x*spacing)+x, benderNews[x-1])
     
-print(articles)
 
 image = Image.open(osPath + "Wappen\\Feld.jpg")
 image = image.resize((354, 720), Image.ANTIALIAS)
