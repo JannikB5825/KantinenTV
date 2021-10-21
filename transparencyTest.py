@@ -252,7 +252,6 @@ def setSpieltag():
                 logos[2*x+y] = logos[2*x+y].resize((hsize,baseheight), Image.ANTIALIAS)
                 logos[2*x+y]= ImageTk.PhotoImage(logos[2*x+y])
                 canvas.itemconfig(tableLogos[2*x+y], image = logos[2*x+y])
-                print(2*x+y)
             canvas.itemconfig(points[2*x], text = json[x]["matchResults"][0]["pointsTeam1"])
             canvas.itemconfig(points[2*x+1], text = json[x]["matchResults"][0]["pointsTeam2"])
         
@@ -333,7 +332,6 @@ def show_articles(articles):
 def drawTable():
     global teams
     setSpieltag()
-    print(teams)
     canvas.create_rectangle(4,90,45,810,width = 4)
     canvas.create_rectangle(45,810,300,90,width = 4)
     canvas.create_rectangle(300,90,357,810,width = 4)
