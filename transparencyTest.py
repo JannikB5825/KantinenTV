@@ -66,7 +66,8 @@ weatherColors={
 }
 
 changeSpeed = 1000
-toggle = False
+toggleGame = False
+toggle45 = False
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -213,6 +214,7 @@ def setTeams():
         json = json_.loads(result.text)
         for i in range(0,18):
             canvas.itemconfig(teams[i], text = json[i]["shortName"])
+            canvas.itemconfig(teams[i], state = "hidden")
 
 
 def setPoints():
@@ -224,6 +226,7 @@ def setPoints():
         json = json_.loads(result.text)
         for i in range(0,18):
             canvas.itemconfig(points[i], text = json[i]["points"])
+            canvas.itemconfig(points[i], state = "hidden")
             
 
 def setLogos():
@@ -242,6 +245,7 @@ def setLogos():
             logos[i] = logos[i].resize((hsize,baseheight), Image.ANTIALIAS)
             logos[i]= ImageTk.PhotoImage(logos[i])
             canvas.itemconfig(logos[i], image = logos[i])
+            canvas.itemconfig(logos[i], state = "hidden")
             
 def setSpieltag():
     global teams, points, logos, tableLogos
@@ -263,8 +267,8 @@ def setSpieltag():
     if result:
         json = json_.loads(result.text)
         for x in range(0,9):
-            canvas.itemconfig(teams[2*x], text = json[x]["team1"]["shortName"])
-            canvas.itemconfig(teams[2*x+1], text = json[x]["team2"]["shortName"])
+            canvas.itemconfig(teams[2*x], text = teams_kuerzel[json[x]["team1"]["shortName"]])
+            canvas.itemconfig(teams[2*x+1], text = teams_kuerzel[json[x]["team2"]["shortName"]])
             for y in range(0,2):
                 baseheight = 32
                 logoName = json[x][f"team{y+1}"]["shortName"]
@@ -276,7 +280,40 @@ def setSpieltag():
                 canvas.itemconfig(tableLogos[2*x+y], image = logos[2*x+y])
             canvas.itemconfig(points[2*x], text = json[x]["matchResults"][0]["pointsTeam1"])
             canvas.itemconfig(points[2*x+1], text = json[x]["matchResults"][0]["pointsTeam2"])
-        
+            
+def showGameEnding():
+    global toggle45, toggleGame, teams, points, logos, tableLogos
+    for x in teams:
+        canvas.itemconfig(x, state= "hidden")
+    for x in points:
+        canvas.itemconfig(x, state= "hidden")
+    for x in tableLogos:
+        canvas.itemconfig(x, state= "hidden")
+    distance = 56
+    heightOfRow = 52
+    for x in range(0,10):
+        temp = 110+(distance * x + heightOfRow * x)
+        canvas.itemconfig(teams[x], state= "normal", x=82, y=temp)
+        canvas.itemconfig(points[x], state= "normal", x=350, y=temp)
+        baseheight = 32
+        logoName = teams[x]
+        logos[x] = Image.open(osPath + f"Wappen\\{logoName}.png")
+        wpercent = (baseheight/float(logos[x].size[1]))
+        hsize = int((float(logos[x].size[0])*float(wpercent)))
+        logos[x] = logos[x].resize((hsize,baseheight), Image.ANTIALIAS)
+        logos[x]= ImageTk.PhotoImage(logos[x])
+        canvas.itemconfig(tableLogos[x], image = logos[x])
+
+            
+def toggleTable():
+    global toggleGame
+    if toggleGame:
+        toggleGame = False
+        setLogos()
+        setPoints()
+        setTeams()
+    else:
+        None
 
 
 def addLineBreaks(title, desc, date, publisher):
@@ -354,6 +391,7 @@ def show_articles(articles):
 def drawTable():
     global teams
     setSpieltag()
+    showGameEnding()
     canvas.create_rectangle(4,90,45,810,width = 4)
     canvas.create_rectangle(45,810,300,90,width = 4)
     canvas.create_rectangle(300,90,357,810,width = 4)
