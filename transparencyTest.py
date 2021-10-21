@@ -32,6 +32,28 @@ kuerzel ={
     "Sunday" : "So."
 }
 
+#Bundesliga Teams Kuerzel
+teams_kuerzel = {
+    "Hoffenheim" : "TSG",
+    "Köln" : "KOE",
+    "BVB" : "BVB",
+    "Mainz" : "M05",
+    "Frankfurt" : "SGE",
+    "Hertha" : "BSC",
+    "Freiburg" : "SCF",
+    "Leipzig" : "RBL",
+    "Fürth" : "SGF",
+    "Bochum" : "BOC",
+    "Union Berlin" : "FCU",
+    "Wolfsburg" : "WOB",
+    "Gladbach" : "BMG",
+    "Stuttgart" : "VfB",
+    "Leverkusen" : "B04",
+    "Bayern" : "FCB",
+    "Augsburg" : "FCA",
+    "Bielefeld" : "DSC"
+}
+
 #Bilder nochmal überschauen
 weatherColors={
     2 : "gewitter.jpg", #Gewitter 
