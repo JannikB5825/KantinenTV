@@ -124,9 +124,9 @@ class ArticleFetcher():
 
 def getBothDates():
   list1 = ArticleFetcher.fetch()
-  list2 = ArticleFetcher.fetchIntra()
+  #list2 = ArticleFetcher.fetchIntra()
   #list3 = ArticleFetcher.fetchFromFile()
-  joined = list1 + list2
+  joined = list1
   joined.sort(key=lambda date: datetime.strptime(date[3], "%d.%m.%Y"))
   joined.reverse()
   return joined

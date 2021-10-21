@@ -115,9 +115,7 @@ def getLogos():
     return logos, tableLogos
 
 
-teams = getTeams()
-points = getPoints()
-logos = getLogos()
+
 
 def get_weather():
     url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
@@ -224,7 +222,7 @@ def setLogos():
             canvas.itemconfig(logos[i], image = logos[i])
             
 def setSpieltag():
-    global teams, points, logos
+    global teams, points, logos, tableLogos
     url = 'https://api.openligadb.de/getmatchdata/bl1'
     time.sleep(1)
     result = requests.get(url, verify=False)
@@ -247,13 +245,14 @@ def setSpieltag():
             canvas.itemconfig(teams[2*x+1], text = json[x]["team2"]["shortName"])
             for y in range(0,2):
                 baseheight = 32
-                logoName = json[y][f"team{y+1}"]["shortName"]
+                logoName = json[x][f"team{y+1}"]["shortName"]
                 logos[2*x+y] = Image.open(osPath + f"Wappen\\{logoName}.png")
                 wpercent = (baseheight/float(logos[2*x+y].size[1]))
                 hsize = int((float(logos[2*x+y].size[0])*float(wpercent)))
                 logos[2*x+y] = logos[2*x+y].resize((hsize,baseheight), Image.ANTIALIAS)
                 logos[2*x+y]= ImageTk.PhotoImage(logos[2*x+y])
-                canvas.itemconfig(logos[2*x+y], image = logos[2*x+y])
+                canvas.itemconfig(tableLogos[2*x+y], image = logos[2*x+y])
+                print(2*x+y)
             canvas.itemconfig(points[2*x], text = json[x]["matchResults"][0]["pointsTeam1"])
             canvas.itemconfig(points[2*x+1], text = json[x]["matchResults"][0]["pointsTeam2"])
         
@@ -332,8 +331,9 @@ def show_articles(articles):
         root.after(changeSpeed,lambda: show_articles(articles))
 
 def drawTable():
-    setPoints()
-    setTeams()
+    global teams
+    setSpieltag()
+    print(teams)
     canvas.create_rectangle(4,90,45,810,width = 4)
     canvas.create_rectangle(45,810,300,90,width = 4)
     canvas.create_rectangle(300,90,357,810,width = 4)
@@ -353,11 +353,13 @@ for x in range(1,len(benderNews)+1):
 image = Image.open(osPath + "Wappen\\Feld.jpg")
 image = image.resize((354, 720), Image.ANTIALIAS)
 my_img = ImageTk.PhotoImage(image)
-#canvas.create_rectangle(4,60,356,780,width = 4,fill = "#41b45c")
 canvas.create_image(4,90, image=my_img, anchor=NW)
-setLogos()
+
+
+teams = getTeams()
+points = getPoints()
+logos, tableLogos = getLogos()
 drawTable()
-setSpieltag()
 
 canvas.create_text(165, 890, text=f'{int(currentWeather[2]//1)}°', font=f'bold {font25}', anchor=CENTER)
 canvas.create_text(165, 1000, text=currentWeather[0], font=f'bold {font15}', anchor=CENTER)
