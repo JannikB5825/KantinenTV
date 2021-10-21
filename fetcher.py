@@ -110,22 +110,22 @@ class ArticleFetcher():
       articles.append(crawled.selfList())
     return articles
   
-  def fetchFromFile():
-    articles = [ ]
-    with open(filePath + "news.csv", "r") as r:
-      lines = r.readlines()
-      if lines != None:
-        for line in lines:
-          crawled = CrawledFetcher(line.split(";"))
-          articles.append(crawled.selfList())
-    r.close()
-    return articles
+  #def fetchFromFile():
+  #  articles = [ ]
+  #  with open(filePath + "news.csv", "r") as r:
+  #    lines = r.readlines()
+  #    if lines != None:
+  #      for line in lines:
+  #        crawled = CrawledFetcher(line.split(";"))
+  #        articles.append(crawled.selfList())
+  #  r.close()
+  #  return articles
 
 def getBothDates():
   list1 = ArticleFetcher.fetch()
   list2 = ArticleFetcher.fetchIntra()
-  list3 = ArticleFetcher.fetchFromFile()
-  joined = list1 + list2 + list3
+  #list3 = ArticleFetcher.fetchFromFile()
+  joined = list1 + list2
   joined.sort(key=lambda date: datetime.strptime(date[3], "%d.%m.%Y"))
   joined.reverse()
   return joined

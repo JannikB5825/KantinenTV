@@ -43,7 +43,7 @@ weatherColors={
     9 : "wolcken.jpg" #Wolken
 }
 
-changeSpeed = 5000
+changeSpeed = 1000
 
 
 app = QApplication(sys.argv)
@@ -260,7 +260,7 @@ def show_articles(articles):
             canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],"Bender"))
         except:
             None
-        
+        root.after(changeSpeed,lambda: show_articles(articles))
     elif "intra.mybender" in nowArticle[4]:
         try:
             raw_data = fetcher.send_request(nowArticle[4]).content
@@ -309,6 +309,8 @@ spacing = len(articles) / len(benderNews)
 
 for x in range(1,len(benderNews)+1):
     articles.insert(int(x*spacing)+x, benderNews[x-1])
+    
+print(articles)
 
 image = Image.open(osPath + "Wappen\\Feld.jpg")
 image = image.resize((354, 720), Image.ANTIALIAS)
