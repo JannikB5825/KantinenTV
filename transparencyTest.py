@@ -61,13 +61,13 @@ weatherColors={
     5 : "regen.jpg", #Regen 
     6 : "schnee.jpg", #Schnee
     7 : "nebel.jpg", #Nebel
-    8 : "sonnig.jpg", #Sonnig
+    8 : "sonnig.jpg", #Sonnig   
     9 : "wolcken.jpg" #Wolken
 }
 
 changeSpeed = 1000
 toggleGame = False
-toggle45 = False
+toggle45 = True
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -79,6 +79,7 @@ faktor = normalScreenDPI / dpi
 font12 = int(math.ceil(12*faktor))
 font15 = int(math.ceil(15*faktor))
 font18 = int(math.ceil(18*faktor))
+font30 = int(math.ceil(30*faktor))
 font25 = int(math.ceil(25*faktor))
 font100 = int(math.ceil(100*faktor))
 
@@ -244,11 +245,11 @@ def setLogos():
             hsize = int((float(logos[i].size[0])*float(wpercent)))
             logos[i] = logos[i].resize((hsize,baseheight), Image.ANTIALIAS)
             logos[i]= ImageTk.PhotoImage(logos[i])
-            canvas.itemconfig(logos[i], image = logos[i])
-            canvas.itemconfig(logos[i], state = "hidden")
+            canvas.itemconfig(tableLogos[i], image = logos[i])
+            canvas.itemconfig(tableLogos[i], state = "hidden")
             
 def setSpieltag():
-    global teams, points, logos, tableLogos
+    global teams, points, logos, tableLogos, teamNames
     url = 'https://api.openligadb.de/getmatchdata/bl1'
     time.sleep(1)
     result = requests.get(url, verify=False)
@@ -272,6 +273,7 @@ def setSpieltag():
             for y in range(0,2):
                 baseheight = 32
                 logoName = json[x][f"team{y+1}"]["shortName"]
+                teamNames.append(logoName)
                 logos[2*x+y] = Image.open(osPath + f"Wappen\\{logoName}.png")
                 wpercent = (baseheight/float(logos[2*x+y].size[1]))
                 hsize = int((float(logos[2*x+y].size[0])*float(wpercent)))
@@ -281,37 +283,64 @@ def setSpieltag():
             canvas.itemconfig(points[2*x], text = json[x]["matchResults"][0]["pointsTeam1"])
             canvas.itemconfig(points[2*x+1], text = json[x]["matchResults"][0]["pointsTeam2"])
             
+            
 def showGameEnding():
-    global toggle45, toggleGame, teams, points, logos, tableLogos
+    global toggle45, toggleGame, teams, points, logos, tableLogos, teamNames
     for x in teams:
         canvas.itemconfig(x, state= "hidden")
     for x in points:
         canvas.itemconfig(x, state= "hidden")
     for x in tableLogos:
         canvas.itemconfig(x, state= "hidden")
-    distance = 56
-    heightOfRow = 52
+    distance = 22
+    heightOfRow = 50
     for x in range(0,10):
+        y = x
+        if toggle45:
+            y += 8
+            toggle45 = False
+        else:
+            toggle45 = True
+        temp = 125+(distance * x + heightOfRow * x)
+        canvas.itemconfig(teams[y], state= "normal", font=f'bold {font30}')
+        canvas.coords(teams[y],82 ,temp)
+        canvas.itemconfig(points[y], state= "normal", font=f'bold {font30}')
+        canvas.coords(points[y],350 ,temp)
+        baseheight = 64
+        logoName = teamNames[y]
+        logos[y] = Image.open(osPath + f"Wappen\\{logoName}.png")
+        wpercent = (baseheight/float(logos[y].size[1]))
+        hsize = int((float(logos[y].size[0])*float(wpercent)))
+        logos[y] = logos[y].resize((hsize,baseheight), Image.ANTIALIAS)
+        logos[y]= ImageTk.PhotoImage(logos[y])
+        tableLogos[y] = canvas.create_image(40,temp,anchor=CENTER, image=logos[y])
+
+def setWholeTable():
+    global teams, points, logos, tableLogos, teamNames
+    setLogos()
+    setPoints()
+    setTeams()
+    for x in teams:
+        canvas.itemconfig(x, state= "normal", font=f'bold {font18}')
+    for x in points:
+        canvas.itemconfig(x, state= "normal", font=f'bold {font18}')
+    for x in tableLogos:
+        canvas.itemconfig(x, state= "normal")
+    distance = 22
+    heightOfRow = 18
+    for x in range(0,18):
         temp = 110+(distance * x + heightOfRow * x)
-        canvas.itemconfig(teams[x], state= "normal", x=82, y=temp)
-        canvas.itemconfig(points[x], state= "normal", x=350, y=temp)
-        baseheight = 32
-        logoName = teams[x]
-        logos[x] = Image.open(osPath + f"Wappen\\{logoName}.png")
-        wpercent = (baseheight/float(logos[x].size[1]))
-        hsize = int((float(logos[x].size[0])*float(wpercent)))
-        logos[x] = logos[x].resize((hsize,baseheight), Image.ANTIALIAS)
-        logos[x]= ImageTk.PhotoImage(logos[x])
-        canvas.itemconfig(tableLogos[x], image = logos[x])
+        canvas.coords(teams[x],50 ,temp)
+        canvas.coords(points[x],350 ,temp)
+        tableLogos[x] = canvas.create_image(24,temp,anchor=CENTER, image=logos[x])
+        
 
             
 def toggleTable():
     global toggleGame
     if toggleGame:
         toggleGame = False
-        setLogos()
-        setPoints()
-        setTeams()
+        
     else:
         None
 
@@ -388,13 +417,19 @@ def show_articles(articles):
             print("fail")
         root.after(changeSpeed,lambda: show_articles(articles))
 
-def drawTable():
-    global teams
-    setSpieltag()
-    showGameEnding()
-    canvas.create_rectangle(4,90,45,810,width = 4)
-    canvas.create_rectangle(45,810,300,90,width = 4)
-    canvas.create_rectangle(300,90,357,810,width = 4)
+def moveLogoColoumn(left, middle, toggle):
+    if toggle:
+        shift = -32
+    else:
+        shift = 32
+    x0, y0, x1, y1 = canvas.coords(left)
+    x1 += shift
+    canvas.coords(left, x0, y0, x1, y1)
+    x0, y0, x1, y1 = canvas.coords(middle)
+    x0 += shift
+    canvas.coords(middle, x0, y0, x1, y1)
+
+
     
     
 weather = get_weather()
@@ -413,11 +448,18 @@ image = image.resize((354, 720), Image.ANTIALIAS)
 my_img = ImageTk.PhotoImage(image)
 canvas.create_image(4,90, image=my_img, anchor=NW)
 
-
+teamNames = []
 teams = getTeams()
 points = getPoints()
 logos, tableLogos = getLogos()
-drawTable()
+setSpieltag()
+showGameEnding()
+setWholeTable()
+left = canvas.create_rectangle(4,90,45,810,width = 4)
+middle = canvas.create_rectangle(45,810,300,90,width = 4)
+right = canvas.create_rectangle(300,90,357,810,width = 4)
+moveLogoColoumn(left, middle, True)
+
 
 canvas.create_text(165, 890, text=f'{int(currentWeather[2]//1)}°', font=f'bold {font25}', anchor=CENTER)
 canvas.create_text(165, 1000, text=currentWeather[0], font=f'bold {font15}', anchor=CENTER)
