@@ -270,6 +270,7 @@ def setSpieltag():
         for x in range(0,9):
             canvas.itemconfig(teams[2*x], text = teams_kuerzel[json[x]["team1"]["shortName"]])
             canvas.itemconfig(teams[2*x+1], text = teams_kuerzel[json[x]["team2"]["shortName"]])
+            print(teams_kuerzel[json[x]["team1"]["shortName"]],teams_kuerzel[json[x]["team2"]["shortName"]])
             for y in range(0,2):
                 baseheight = 32
                 logoName = json[x][f"team{y+1}"]["shortName"]
@@ -286,12 +287,8 @@ def setSpieltag():
             
 def showGameEnding():
     global toggle45, toggleGame, teams, points, logos, tableLogos, teamNames
-    for x in teams:
-        canvas.itemconfig(x, state= "hidden")
-    for x in points:
-        canvas.itemconfig(x, state= "hidden")
-    for x in tableLogos:
-        canvas.itemconfig(x, state= "hidden")
+    disableAll()
+    setSpieltag()
     distance = 22
     heightOfRow = 50
     for x in range(0,10):
@@ -314,12 +311,14 @@ def showGameEnding():
         logos[y] = logos[y].resize((hsize,baseheight), Image.ANTIALIAS)
         logos[y]= ImageTk.PhotoImage(logos[y])
         tableLogos[y] = canvas.create_image(40,temp,anchor=CENTER, image=logos[y])
+    
 
 def setWholeTable():
     global teams, points, logos, tableLogos, teamNames
     setLogos()
     setPoints()
     setTeams()
+    disableAll()
     for x in teams:
         canvas.itemconfig(x, state= "normal", font=f'bold {font18}')
     for x in points:
@@ -334,8 +333,15 @@ def setWholeTable():
         canvas.coords(points[x],350 ,temp)
         tableLogos[x] = canvas.create_image(24,temp,anchor=CENTER, image=logos[x])
         
-
-            
+def disableAll():
+    global teams, points, logos, tableLogos, teamNames
+    for x in teams:
+        canvas.itemconfig(x, state= "hidden")
+    for x in points:
+        canvas.itemconfig(x, state= "hidden")
+    for x in tableLogos:
+        canvas.itemconfig(x, state= "hidden")
+        
 def toggleTable():
     global toggleGame
     if toggleGame:
@@ -452,7 +458,7 @@ teamNames = []
 teams = getTeams()
 points = getPoints()
 logos, tableLogos = getLogos()
-setSpieltag()
+
 showGameEnding()
 setWholeTable()
 left = canvas.create_rectangle(4,90,45,810,width = 4)

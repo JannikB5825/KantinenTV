@@ -8,8 +8,8 @@ import re
 from datetime import datetime
 import os
 
-username = "jannik.becker"
-password = "BenderCoaster5"
+username = "kantinen.tv"
+password = "RasperryPi2021"
 osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
 osPath = osPath.replace("\\","\\")+"\\"
 filePath = osPath
@@ -73,42 +73,45 @@ class ArticleFetcher():
     
     main_body = doc.find_all("tbody")[1]
     for card in main_body.find_all("tr")[1].find_all("tr")[1:]:
-      img = "Bender123"
-      title = card.get_text()
-      strong = card.select_one("strong").text
-      date = card.find("nobr").text[:-6]
-      title = title[len(strong)+16:]
-      
-      
-      if type(title) != """NoneType""":
-        title = "".join(c for c in title if ord(c)<128)
-        title = title.replace("\xa0"," ")
-        title = title.replace("\u200b","")
-        
-      if type(strong) != """NoneType""":
-        strong = "".join(c for c in strong if ord(c)<128)
-        strong = strong.replace("\u200b","")
+      try:
+        img = "Bender123"
+        title = card.get_text()
+        strong = card.select_one("strong").text
+        date = card.find("nobr").text[:-6]
+        title = title[len(strong)+16:]
 
-      linkToMain = re.findall(r'"([^"]*)"', str(card.find("a")))
-      if len(linkToMain) > 0:
-        if linkToMain[0][0] != "/":
-          linkToMain = "Bender123"
-        else:
-          linkToMain = url + linkToMain[0]
-          newR = send_request(linkToMain)
-          newDoc = BeautifulSoup(newR.text, "html.parser")
-          imageMain = newDoc.find("div", {"class": "ms-rtestate-field"})
-          if type(imageMain) != """NoneType""":
-            img = imageMain.select_one("img").get("src")
-          if img[:3] == "/de":
-            img = url + img
+
+        if type(title) != """NoneType""":
+          title = "".join(c for c in title if ord(c)<128)
+          title = title.replace("\xa0"," ")
+          title = title.replace("\u200b","")
+
+        if type(strong) != """NoneType""":
+          strong = "".join(c for c in strong if ord(c)<128)
+          strong = strong.replace("\u200b","")
+
+        linkToMain = re.findall(r'"([^"]*)"', str(card.find("a")))
+        if len(linkToMain) > 0:
+          if linkToMain[0][0] != "/":
+            linkToMain = "Bender123"
           else:
-            img = "Bender123"
-      else:
-        linkToMain = "Bender123"
-      
-      crawled = CrawledFetcher(strong, title, date, img)
-      articles.append(crawled.selfList())
+            linkToMain = url + linkToMain[0]
+            newR = send_request(linkToMain)
+            newDoc = BeautifulSoup(newR.text, "html.parser")
+            imageMain = newDoc.find("div", {"class": "ms-rtestate-field"})
+            if type(imageMain) != """NoneType""":
+              img = imageMain.select_one("img").get("src")
+            if img[:3] == "/de":
+              img = url + img
+            else:
+              img = "Bender123"
+        else:
+          linkToMain = "Bender123"
+        
+        crawled = CrawledFetcher(strong, title, date, img)
+        articles.append(crawled.selfList())
+      except:
+        None
     return articles
   
   #def fetchFromFile():
@@ -124,9 +127,9 @@ class ArticleFetcher():
 
 def getBothDates():
   list1 = ArticleFetcher.fetch()
-  #list2 = ArticleFetcher.fetchIntra()
+  list2 = ArticleFetcher.fetchIntra()
   #list3 = ArticleFetcher.fetchFromFile()
-  joined = list1
+  joined = list1 + list2
   joined.sort(key=lambda date: datetime.strptime(date[3], "%d.%m.%Y"))
   joined.reverse()
   return joined
