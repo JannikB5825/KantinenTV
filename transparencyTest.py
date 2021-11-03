@@ -14,7 +14,7 @@ import io
 import tkinter.font as TkFont
 import fetcher
 import math
-#import stockticker
+import stockticker
 
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
@@ -32,28 +32,6 @@ kuerzel ={
     "Sunday" : "So."
 }
 
-#Bundesliga Teams Kuerzel
-teams_kuerzel = {
-    "Hoffenheim" : "TSG",
-    "Köln" : "KOE",
-    "BVB" : "BVB",
-    "Mainz" : "M05",
-    "Frankfurt" : "SGE",
-    "Hertha" : "BSC",
-    "Freiburg" : "SCF",
-    "Leipzig" : "RBL",
-    "Fürth" : "SGF",
-    "Bochum" : "BOC",
-    "Union Berlin" : "FCU",
-    "Wolfsburg" : "WOB",
-    "Gladbach" : "BMG",
-    "Stuttgart" : "VfB",
-    "Leverkusen" : "B04",
-    "Bayern" : "FCB",
-    "Augsburg" : "FCA",
-    "Bielefeld" : "DSC"
-}
-
 #Bilder nochmal überschauen
 weatherColors={
     2 : "gewitter.jpg", #Gewitter 
@@ -61,13 +39,12 @@ weatherColors={
     5 : "regen.jpg", #Regen 
     6 : "schnee.jpg", #Schnee
     7 : "nebel.jpg", #Nebel
-    8 : "sonnig.jpg", #Sonnig   
+    8 : "sonnig.jpg", #Sonnig
     9 : "wolcken.jpg" #Wolken
 }
 
-changeSpeed = 1000
-toggleGame = False
-toggle45 = True
+changeSpeed = 30000
+
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -76,11 +53,12 @@ app.quit()
 
 normalScreenDPI = 157.74020756611984
 faktor = normalScreenDPI / dpi
-font12 = int(math.ceil(12*faktor))
-font15 = int(math.ceil(15*faktor))
+font17 = int(math.ceil(17*faktor))
 font18 = int(math.ceil(18*faktor))
-font30 = int(math.ceil(30*faktor))
+font20 = int(math.ceil(20*faktor))
 font25 = int(math.ceil(25*faktor))
+font35 = int(math.ceil(35*faktor))
+font40 = int(math.ceil(40*faktor))
 font100 = int(math.ceil(100*faktor))
 
 #Create an instance of tkinter frame
@@ -92,16 +70,17 @@ root.geometry(screensize)
 #Create a canvas
 canvas= Canvas(root,width=root.winfo_screenwidth(),height=root.winfo_screenheight())
 canvas.place(x =0, y = 0)
-#aplicacion = stockticker.AplicationTkinter(root,faktor)
+aplicacion = stockticker.AplicationTkinter(root,faktor)
 
 
 #Load an image in the script
-wetter = canvas.create_image(358,900,anchor="e",image=ImageTk.PhotoImage(Image.open(osPath + "Wetter\\gewitter.jpg")))
+wetter = canvas.create_image(358,900,anchor="e",image=ImageTk.PhotoImage(Image.open(osPath + "Wetter\\sonnig.jpg")))
+newWetterBild = Image.open(osPath + "Wetter\\sonnig.jpg")
 bg_img= ImageTk.PhotoImage(Image.open(osPath + "Icon\\Black_Bars.png"))
 bg = canvas.create_image(0,0,anchor=NW,image=bg_img)
-titel = canvas.create_text(1130,450, text="", font=(f'bold {font12}'), anchor='w')
+titel = canvas.create_text(1030,450, text="", font=(f'bold {font17}'), anchor='w')
 newNewsImage = ImageTk.PhotoImage(Image.open(osPath + "Icon\\Download.png"))
-newsImage = canvas.create_image(750,450,anchor=CENTER,image=newNewsImage)
+newsImage = canvas.create_image(700,450,anchor=CENTER,image=newNewsImage)
 
 #Loads Football table
 distance = 22
@@ -139,8 +118,6 @@ def getLogos():
     return logos, tableLogos
 
 
-
-
 def get_weather():
     url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
     result = requests.get(url, verify=False)
@@ -157,6 +134,7 @@ def get_weather():
 
 
 def get_current():
+    time.sleep(1)
     url = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
     result = requests.get(url, verify=False)
     if result:
@@ -170,6 +148,7 @@ def get_current():
 def get_date():
     global kuerzel
     url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
+    time.sleep(1)
     result = requests.get(url, verify=False)
     if result:
         json = json_.loads(result.text)
@@ -207,31 +186,28 @@ def get_all_article():
     
 
 def setTeams():
-    global teams
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
     time.sleep(1)
     result = requests.get(url3, verify=False)
+    tableTeams = getTeams()
     if result:
         json = json_.loads(result.text)
         for i in range(0,18):
-            canvas.itemconfig(teams[i], text = json[i]["shortName"])
-            canvas.itemconfig(teams[i], state = "hidden")
+            canvas.itemconfig(tableTeams[i], text = json[i]["shortName"])
 
 
 def setPoints():
-    global points
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
     time.sleep(1)
     result = requests.get(url3, verify=False)
+    tablePoints = getPoints()
     if result:
         json = json_.loads(result.text)
         for i in range(0,18):
-            canvas.itemconfig(points[i], text = json[i]["points"])
-            canvas.itemconfig(points[i], state = "hidden")
+            canvas.itemconfig(tablePoints[i], text = json[i]["points"])
             
 
 def setLogos():
-    global logos
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
     time.sleep(1)
     result = requests.get(url3, verify=False)
@@ -246,110 +222,6 @@ def setLogos():
             logos[i] = logos[i].resize((hsize,baseheight), Image.ANTIALIAS)
             logos[i]= ImageTk.PhotoImage(logos[i])
             canvas.itemconfig(tableLogos[i], image = logos[i])
-            canvas.itemconfig(tableLogos[i], state = "hidden")
-            
-def setSpieltag():
-    global teams, points, logos, tableLogos, teamNames
-    url = 'https://api.openligadb.de/getmatchdata/bl1'
-    time.sleep(1)
-    result = requests.get(url, verify=False)
-    if result:
-        json = json_.loads(result.text)
-        seasonJahr = json[0]["leagueSeason"]
-        spieltag = json[0]['group']["groupOrderID"]
-        if spieltag == 1:
-            spieltag = 34
-            seasonJahr -= 1
-        else:
-            spieltag -= 1
-    url += f"/{seasonJahr}/{spieltag}"
-    time.sleep(1)
-    result = requests.get(url, verify=False)
-    if result:
-        json = json_.loads(result.text)
-        for x in range(0,9):
-            canvas.itemconfig(teams[2*x], text = teams_kuerzel[json[x]["team1"]["shortName"]])
-            canvas.itemconfig(teams[2*x+1], text = teams_kuerzel[json[x]["team2"]["shortName"]])
-            print(teams_kuerzel[json[x]["team1"]["shortName"]],teams_kuerzel[json[x]["team2"]["shortName"]])
-            for y in range(0,2):
-                baseheight = 32
-                logoName = json[x][f"team{y+1}"]["shortName"]
-                teamNames.append(logoName)
-                logos[2*x+y] = Image.open(osPath + f"Wappen\\{logoName}.png")
-                wpercent = (baseheight/float(logos[2*x+y].size[1]))
-                hsize = int((float(logos[2*x+y].size[0])*float(wpercent)))
-                logos[2*x+y] = logos[2*x+y].resize((hsize,baseheight), Image.ANTIALIAS)
-                logos[2*x+y]= ImageTk.PhotoImage(logos[2*x+y])
-                canvas.itemconfig(tableLogos[2*x+y], image = logos[2*x+y])
-            canvas.itemconfig(points[2*x], text = json[x]["matchResults"][0]["pointsTeam1"])
-            canvas.itemconfig(points[2*x+1], text = json[x]["matchResults"][0]["pointsTeam2"])
-            
-            
-def showGameEnding():
-    global toggle45, toggleGame, teams, points, logos, tableLogos, teamNames
-    disableAll()
-    setSpieltag()
-    distance = 22
-    heightOfRow = 50
-    for x in range(0,10):
-        y = x
-        if toggle45:
-            y += 8
-            toggle45 = False
-        else:
-            toggle45 = True
-        temp = 125+(distance * x + heightOfRow * x)
-        canvas.itemconfig(teams[y], state= "normal", font=f'bold {font30}')
-        canvas.coords(teams[y],82 ,temp)
-        canvas.itemconfig(points[y], state= "normal", font=f'bold {font30}')
-        canvas.coords(points[y],350 ,temp)
-        baseheight = 64
-        logoName = teamNames[y]
-        logos[y] = Image.open(osPath + f"Wappen\\{logoName}.png")
-        wpercent = (baseheight/float(logos[y].size[1]))
-        hsize = int((float(logos[y].size[0])*float(wpercent)))
-        logos[y] = logos[y].resize((hsize,baseheight), Image.ANTIALIAS)
-        logos[y]= ImageTk.PhotoImage(logos[y])
-        tableLogos[y] = canvas.create_image(40,temp,anchor=CENTER, image=logos[y])
-    
-
-def setWholeTable():
-    global teams, points, logos, tableLogos, teamNames
-    setLogos()
-    setPoints()
-    setTeams()
-    disableAll()
-    for x in teams:
-        canvas.itemconfig(x, state= "normal", font=f'bold {font18}')
-    for x in points:
-        canvas.itemconfig(x, state= "normal", font=f'bold {font18}')
-    for x in tableLogos:
-        canvas.itemconfig(x, state= "normal")
-    distance = 22
-    heightOfRow = 18
-    for x in range(0,18):
-        temp = 110+(distance * x + heightOfRow * x)
-        canvas.coords(teams[x],50 ,temp)
-        canvas.coords(points[x],350 ,temp)
-        tableLogos[x] = canvas.create_image(24,temp,anchor=CENTER, image=logos[x])
-        
-def disableAll():
-    global teams, points, logos, tableLogos, teamNames
-    for x in teams:
-        canvas.itemconfig(x, state= "hidden")
-    for x in points:
-        canvas.itemconfig(x, state= "hidden")
-    for x in tableLogos:
-        canvas.itemconfig(x, state= "hidden")
-        
-def toggleTable():
-    global toggleGame
-    if toggleGame:
-        toggleGame = False
-        
-    else:
-        None
-
 
 def addLineBreaks(title, desc, date, publisher):
     titleArr = title.split()
@@ -357,7 +229,7 @@ def addLineBreaks(title, desc, date, publisher):
     back = ""
     temp = ""
     for x in titleArr:
-        if len(temp+x) > 60:
+        if len(temp+x) > 50:
             back += temp + "\n"
             temp = x + " "
         else:
@@ -365,7 +237,7 @@ def addLineBreaks(title, desc, date, publisher):
     back += temp + "\n\n"
     temp = ""
     for x in descArr:
-        if len(temp+x) > 60:
+        if len(temp+x) > 50:
             back += temp + "\n"
             temp = x + " "
         else:
@@ -375,34 +247,37 @@ def addLineBreaks(title, desc, date, publisher):
 
 def show_articles(articles):
     global newNewsImage, changeSpeed
+    configWeather()
     nowArticle = articles.pop(0)
     articles.append(nowArticle)
+    if nowArticle[2] == "Bender123":
+        nowArticle[2] = "Bender"
     if 'None' in nowArticle or None in nowArticle:
         root.after(0,lambda: show_articles(articles))
     elif "Bender123" in nowArticle[4]:
         try:
-            basewidth = 700
+            basewidth = 600
             newNewsImage = Image.open(osPath + "//Icon//myBender.jpg")
             wpercent = (basewidth/float(newNewsImage.size[0]))
             hsize = int((float(newNewsImage.size[1])*float(wpercent)))
             newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
             newNewsImage= ImageTk.PhotoImage(newNewsImage)
             canvas.itemconfig(newsImage, image = newNewsImage)
-            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],"Bender"))
+            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
         except:
             None
         root.after(changeSpeed,lambda: show_articles(articles))
     elif "intra.mybender" in nowArticle[4]:
         try:
             raw_data = fetcher.send_request(nowArticle[4]).content
-            basewidth = 700
+            basewidth = 600
             newNewsImage = Image.open(io.BytesIO(raw_data))
             wpercent = (basewidth/float(newNewsImage.size[0]))
             hsize = int((float(newNewsImage.size[1])*float(wpercent)))
             newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
             newNewsImage= ImageTk.PhotoImage(newNewsImage)
             canvas.itemconfig(newsImage, image = newNewsImage)
-            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],"Bender"))
+            canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
         except:
             print(nowArticle)
             print("fail")
@@ -410,7 +285,7 @@ def show_articles(articles):
     else:
         try:
             raw_data = urllib.request.urlopen(nowArticle[4]).read()
-            basewidth = 700
+            basewidth = 600
             newNewsImage = Image.open(io.BytesIO(raw_data))
             wpercent = (basewidth/float(newNewsImage.size[0]))
             hsize = int((float(newNewsImage.size[1])*float(wpercent)))
@@ -423,23 +298,39 @@ def show_articles(articles):
             print("fail")
         root.after(changeSpeed,lambda: show_articles(articles))
 
-def moveLogoColoumn(left, middle, toggle):
-    if toggle:
-        shift = -32
-    else:
-        shift = 32
-    x0, y0, x1, y1 = canvas.coords(left)
-    x1 += shift
-    canvas.coords(left, x0, y0, x1, y1)
-    x0, y0, x1, y1 = canvas.coords(middle)
-    x0 += shift
-    canvas.coords(middle, x0, y0, x1, y1)
+def drawTable():
+    setPoints()
+    setTeams()
+    canvas.create_rectangle(4,90,45,810,width = 4)
+    canvas.create_rectangle(45,810,300,90,width = 4)
+    canvas.create_rectangle(300,90,357,810,width = 4)
 
-
+def configWeather():
+    currentWeather = get_current()
+    canvas.itemconfig(currentWeatherArray[0], text= f'{int(currentWeather[2]//1)}°')
+    canvas.itemconfig(currentWeatherArray[1], text= currentWeather[0])
+    setWeatherPicture()
     
+def setWeatherPicture():
+    global newWetterBild, wetter
+    if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
+        basewidth = 700
+        newWetterBild = Image.open(osPath + "Wetter//" + weatherColors[9])
+        wpercent = (basewidth/float(newWetterBild.size[0]))
+        hsize = int((float(newWetterBild.size[1])*float(wpercent)))
+        newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
+        newWetterBild= ImageTk.PhotoImage(newWetterBild)
+        canvas.itemconfig(wetter,image=newWetterBild)
+    else:
+        basewidth = 700
+        newWetterBild = Image.open(osPath + "Wetter//" + weatherColors[currentWeather[3]//100])
+        wpercent = (basewidth/float(newWetterBild.size[0]))
+        hsize = int((float(newWetterBild.size[1])*float(wpercent)))
+        newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
+        newWetterBild= ImageTk.PhotoImage(newWetterBild)
+        canvas.itemconfig(wetter,image=newWetterBild)
     
 weather = get_weather()
-currentWeather = get_current()
 dateWeather = get_date()
 benderNews = fetcher.getBothDates()
 articles = get_all_article()
@@ -447,75 +338,44 @@ spacing = len(articles) / len(benderNews)
 
 for x in range(1,len(benderNews)+1):
     articles.insert(int(x*spacing)+x, benderNews[x-1])
-    
 
 image = Image.open(osPath + "Wappen\\Feld.jpg")
 image = image.resize((354, 720), Image.ANTIALIAS)
 my_img = ImageTk.PhotoImage(image)
 canvas.create_image(4,90, image=my_img, anchor=NW)
-
-teamNames = []
-teams = getTeams()
-points = getPoints()
 logos, tableLogos = getLogos()
+setLogos()
+drawTable()
+currentWeather = get_current()
 
-showGameEnding()
-setWholeTable()
-left = canvas.create_rectangle(4,90,45,810,width = 4)
-middle = canvas.create_rectangle(45,810,300,90,width = 4)
-right = canvas.create_rectangle(300,90,357,810,width = 4)
-moveLogoColoumn(left, middle, True)
+currentWeatherArray = [
+    canvas.create_text(165, 920, text=f'{int(currentWeather[2]//1)}°', font=f'bold {font40}', anchor=CENTER),
+    canvas.create_text(165, 1050, text=currentWeather[0], font=f'bold {font18}', anchor=CENTER),
+    canvas.create_text(165, 1000, text=f'{int(weather[0]//1)}° / {int(weather[1]//1)}°', font=f'bold {font25}', anchor=CENTER)
+]
+setWeatherPicture()
 
-
-canvas.create_text(165, 890, text=f'{int(currentWeather[2]//1)}°', font=f'bold {font25}', anchor=CENTER)
-canvas.create_text(165, 1000, text=currentWeather[0], font=f'bold {font15}', anchor=CENTER)
-canvas.create_text(165, 1050, text='Grünberg', font=f'bold {font15}', anchor=CENTER)
-canvas.create_text(165, 950, text=f'{int(weather[0]//1)}° / {int(weather[1]//1)}°', font=f'bold {font15}', anchor=CENTER)
-
-# ↑ current status
-##############################################################################################################################################
-# ↓ next days
 
 for x in range(2,7):
     abstand = (x-2) * 313
     weather[x*3] = ImageTk.PhotoImage(Image.open(osPath + f"Icon\\{weather[x*3]}@2x.png"))
-    canvas.create_image(400 + abstand, 960,anchor=NW,image=weather[x*3])
-    canvas.create_text(550 + abstand, 1010, text=f'{int(weather[x*3 - 2]//1)}° / {int(weather[x*3 - 1]//1)}°', font=f'bold {font18}', anchor=CENTER)
+    canvas.create_image(365 + abstand, 960,anchor=NW,image=weather[x*3])
+    canvas.create_text(560 + abstand, 1010, text=f'{int(weather[x*3 - 2]//1)}° / {int(weather[x*3 - 1]//1)}°', font=f'bold {font20}', anchor=CENTER)
 
-#################################################################################################################################
-# ↓ clock
 
-digital_clock_lbl = Label(text="00:00", font=f'ds-digital {font12}')
+digital_clock_lbl = Label(text="00:00")
 clock = canvas.create_text(1900, 0, text=digital_clock_lbl["text"], font=f'ds-digital {font100}', anchor=NE)
 update_clock()
 
-#####################################################################################################################################
-# ↓ date
 
 canvas.create_text(178, 40, text="Bundesliga:", font=f'bold {font25}', anchor=CENTER)
-canvas.create_text(165, 835, text="Heute:", font=f'bold {font18}', anchor=CENTER)
-canvas.create_text(515, 945, text="Morgen:", font=f'bold {font18}', anchor=CENTER)
-canvas.create_text(828, 945, text=f'{dateWeather[0]}:', font=f'bold {font18}')
-canvas.create_text(1142, 945, text=f'{dateWeather[1]}:', font=f'bold {font18}')
-canvas.create_text(1455, 945, text=f'{dateWeather[2]}:', font=f'bold {font18}')
-canvas.create_text(1763, 945, text=f'{dateWeather[3]}:', font=f'bold {font18}')
+canvas.create_text(165, 835, text="Heute:", font=f'bold {font20}', anchor=CENTER)
+canvas.create_text(515, 945, text="Morgen:", font=f'bold {font20}', anchor=CENTER)
+canvas.create_text(828, 945, text=f'{dateWeather[0]}:', font=f'bold {font20}')
+canvas.create_text(1142, 945, text=f'{dateWeather[1]}:', font=f'bold {font20}')
+canvas.create_text(1455, 945, text=f'{dateWeather[2]}:', font=f'bold {font20}')
+canvas.create_text(1763, 945, text=f'{dateWeather[3]}:', font=f'bold {font20}')
 
-if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
-    basewidth = 700
-    newWetterBild = Image.open(osPath + "Wetter//" + weatherColors[9])
-    wpercent = (basewidth/float(newWetterBild.size[0]))
-    hsize = int((float(newWetterBild.size[1])*float(wpercent)))
-    newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
-    newWetterBild= ImageTk.PhotoImage(newWetterBild)
-    canvas.itemconfig(wetter,image=newWetterBild)
-else:
-    basewidth = 700
-    newWetterBild = Image.open(osPath + "Wetter//" + weatherColors[currentWeather[3]//100])
-    wpercent = (basewidth/float(newWetterBild.size[0]))
-    hsize = int((float(newWetterBild.size[1])*float(wpercent)))
-    newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
-    newWetterBild= ImageTk.PhotoImage(newWetterBild)
-    canvas.itemconfig(wetter,image=newWetterBild)
 canvas.config(background="#18c8db")
 
 
