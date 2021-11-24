@@ -82,13 +82,18 @@ class ArticleFetcher():
 
 
         if type(title) != """NoneType""":
-          title = "".join(c for c in title if ord(c)<128)
-          title = title.replace("\xa0"," ")
-          title = title.replace("\u200b","")
+          title = title.replace(u"\xa0"," ")
+          title = title.replace(u"\u200b"," ")
+          title = "".join(c for c in title if ord(c)<128 or ord(c) in [252,228,246,220,196,214,223])
+          if title[0] == " ":
+            title = title[1:]
 
         if type(strong) != """NoneType""":
-          strong = "".join(c for c in strong if ord(c)<128)
-          strong = strong.replace("\u200b","")
+          strong = strong.replace(u"\u200b"," ")
+          strong = strong.replace(u"\xa0"," ")
+          strong = "".join(c for c in strong if ord(c)<128 or ord(c) in [252,228,246,220,196,214,223])
+          if strong[0] == " ":
+            strong = strong[1:]
 
         linkToMain = re.findall(r'"([^"]*)"', str(card.find("a")))
         if len(linkToMain) > 0:
@@ -108,22 +113,12 @@ class ArticleFetcher():
         else:
           linkToMain = "Bender123"
         
-        crawled = CrawledFetcher(strong, title, date, img)
+        crawled = CrawledFetcher(strong, title[:-6], date, img)
         articles.append(crawled.selfList())
       except:
         None
     return articles
-  
-  #def fetchFromFile():
-  #  articles = [ ]
-  #  with open(filePath + "news.csv", "r") as r:
-  #    lines = r.readlines()
-  #    if lines != None:
-  #      for line in lines:
-  #        crawled = CrawledFetcher(line.split(";"))
-  #        articles.append(crawled.selfList())
-  #  r.close()
-  #  return articles
+
 
 def getBothDates():
   list1 = ArticleFetcher.fetch()

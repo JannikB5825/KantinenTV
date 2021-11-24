@@ -11,7 +11,6 @@ import ctypes
 import os
 import urllib
 import io
-import tkinter.font as TkFont
 import fetcher
 import math
 import stockticker
@@ -32,7 +31,6 @@ kuerzel ={
     "Sunday" : "So."
 }
 
-#Bilder nochmal überschauen
 weatherColors={
     2 : "gewitter.jpg", #Gewitter 
     3 : "regen.jpg", #Nisel regen
@@ -43,8 +41,7 @@ weatherColors={
     9 : "wolcken.jpg" #Wolken
 }
 
-changeSpeed = 30000
-
+changeSpeed = 3000
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -57,7 +54,6 @@ font17 = int(math.ceil(17*faktor))
 font18 = int(math.ceil(18*faktor))
 font20 = int(math.ceil(20*faktor))
 font25 = int(math.ceil(25*faktor))
-font35 = int(math.ceil(35*faktor))
 font40 = int(math.ceil(40*faktor))
 font100 = int(math.ceil(100*faktor))
 
@@ -93,16 +89,16 @@ def getTeams():
         temp = 110+(distance * x + heightOfRow * x)
         tableTeams.append(canvas.create_text(50,temp, text="123", font=f'bold {font18}', anchor='w', fill="white"))
     return tableTeams
-        
-        
+
+
 def getPoints():
     tablePoints = []
     for x in range(0,18):
         temp = 110+(distance * x + heightOfRow * x)
         tablePoints.append(canvas.create_text(350,temp, text="1", font=f'bold {font18}', anchor='e', fill="white"))
     return tablePoints
-    
-    
+
+
 def getLogos():
     logos = []
     tableLogos = []
@@ -160,14 +156,14 @@ def get_date():
         return final
     else:
         return None 
-    
-    
+
+
 def update_clock():
     time_text = time.strftime("%H") + ":" + time.strftime("%M")
     canvas.itemconfigure(clock, text=time_text)
     digital_clock_lbl.after(1000, update_clock)
-    
-    
+
+
 def get_all_article():
     url = 'https://newsapi.org/v2/top-headlines?country=de&apiKey=cc1ce8c5d19b4a198fcd040fcbb47a6a'
     result = requests.get(url, verify=False)        
@@ -183,7 +179,7 @@ def get_all_article():
                                  x["urlToImage"],
                 ])
         return articles
-    
+
 
 def setTeams():
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
@@ -205,7 +201,7 @@ def setPoints():
         json = json_.loads(result.text)
         for i in range(0,18):
             canvas.itemconfig(tablePoints[i], text = json[i]["points"])
-            
+
 
 def setLogos():
     url3 = "https://api.openligadb.de/getbltable/bl1/2021"
@@ -222,6 +218,7 @@ def setLogos():
             logos[i] = logos[i].resize((hsize,baseheight), Image.ANTIALIAS)
             logos[i]= ImageTk.PhotoImage(logos[i])
             canvas.itemconfig(tableLogos[i], image = logos[i])
+
 
 def addLineBreaks(title, desc, date, publisher):
     titleArr = title.split()
@@ -244,6 +241,7 @@ def addLineBreaks(title, desc, date, publisher):
             temp += x + " "
     back += temp + "\n\n-" + publisher + " " + date[:10].replace("-",".")
     return back
+
 
 def show_articles(articles):
     global newNewsImage, changeSpeed
@@ -298,6 +296,7 @@ def show_articles(articles):
             print("fail")
         root.after(changeSpeed,lambda: show_articles(articles))
 
+
 def drawTable():
     setPoints()
     setTeams()
@@ -305,12 +304,14 @@ def drawTable():
     canvas.create_rectangle(45,810,300,90,width = 4)
     canvas.create_rectangle(300,90,357,810,width = 4)
 
+
 def configWeather():
     currentWeather = get_current()
     canvas.itemconfig(currentWeatherArray[0], text= f'{int(currentWeather[2]//1)}°')
     canvas.itemconfig(currentWeatherArray[1], text= currentWeather[0])
     setWeatherPicture()
-    
+
+
 def setWeatherPicture():
     global newWetterBild, wetter
     if currentWeather[3]//100 == 8 and currentWeather[3]%100 != 0:
@@ -329,7 +330,8 @@ def setWeatherPicture():
         newWetterBild = newWetterBild.resize((basewidth,hsize), Image.ANTIALIAS)
         newWetterBild= ImageTk.PhotoImage(newWetterBild)
         canvas.itemconfig(wetter,image=newWetterBild)
-    
+
+
 weather = get_weather()
 dateWeather = get_date()
 benderNews = fetcher.getBothDates()
