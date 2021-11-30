@@ -112,12 +112,17 @@ class ArticleFetcher():
               img = "Bender123"
         else:
           linkToMain = "Bender123"
-        
-        crawled = CrawledFetcher(strong, title[:-6], date, img)
-        articles.append(crawled.selfList())
+        if strong == "Te" or strong == "Anmeldung zum Bender Weihnachtsmarkt bis zum 12. November":
+          crawled = CrawledFetcher("", "", "01.01.1977", "")
+          articles.append(crawled.selfList())
+        else:
+          crawled = CrawledFetcher(strong, title[:-6], date, img)
+          articles.append(crawled.selfList())
       except:
         None
     return articles
+  
+
 
 
 def getBothDates():
@@ -127,4 +132,6 @@ def getBothDates():
   joined = list1 + list2
   joined.sort(key=lambda date: datetime.strptime(date[3], "%d.%m.%Y"))
   joined.reverse()
+  it = CrawledFetcher("IT-Support", "IT-Support", "01.01.1977", "IT-Support")
+  joined.append(it.selfList())
   return joined

@@ -41,7 +41,7 @@ weatherColors={
     9 : "wolcken.jpg" #Wolken
 }
 
-changeSpeed = 3000
+changeSpeed = 1000
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -279,6 +279,18 @@ def show_articles(articles):
         except:
             print(nowArticle)
             print("fail")
+        root.after(changeSpeed,lambda: show_articles(articles))
+    elif "IT-Support" in nowArticle[0]:
+        title = "IT-Support"
+        strong = "Bei Fragen oder Problemen Kai Selenski und Jannik Becker eine E-Mail schicken."
+        basewidth = 600
+        newNewsImage = Image.open(osPath + "//Icon//itSupport.jpg")
+        wpercent = (basewidth/float(newNewsImage.size[0]))
+        hsize = int((float(newNewsImage.size[1])*float(wpercent)))
+        newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
+        newNewsImage= ImageTk.PhotoImage(newNewsImage)
+        canvas.itemconfig(newsImage, image = newNewsImage)
+        canvas.itemconfig(titel, text = addLineBreaks(title,strong,"IT-Support",""))
         root.after(changeSpeed,lambda: show_articles(articles))
     else:
         try:
