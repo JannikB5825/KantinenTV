@@ -15,6 +15,7 @@ import fetcher
 import math
 import stockticker
 
+
 user32 = ctypes.windll.user32
 screensize = str(user32.GetSystemMetrics(0)) + "x" + str(user32.GetSystemMetrics(1))
 osPath = os.path.dirname(os.path.abspath(__file__)).replace("/","\\")
@@ -41,7 +42,7 @@ weatherColors={
     9 : "wolcken.jpg" #Wolken
 }
 
-changeSpeed = 1000
+changeSpeed = 30000
 
 app = QApplication(sys.argv)
 screen = app.screens()[0]
@@ -81,6 +82,7 @@ newsImage = canvas.create_image(700,450,anchor=CENTER,image=newNewsImage)
 #Loads Football table
 distance = 22
 heightOfRow = 18
+counter = 0
 
 
 def getTeams():
@@ -244,10 +246,14 @@ def addLineBreaks(title, desc, date, publisher):
 
 
 def show_articles(articles):
-    global newNewsImage, changeSpeed
+    global newNewsImage, changeSpeed, aplicacion, faktor, counter
     configWeather()
+    print(counter)
+    counter += 1
+    if counter == 10:
+        aplicacion.clear_text()
+        counter = 0
     nowArticle = articles.pop(0)
-    articles.append(nowArticle)
     if nowArticle[2] == "Bender123":
         nowArticle[2] = "Bender"
     if 'None' in nowArticle or None in nowArticle:
@@ -262,6 +268,7 @@ def show_articles(articles):
             newNewsImage= ImageTk.PhotoImage(newNewsImage)
             canvas.itemconfig(newsImage, image = newNewsImage)
             canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
+            articles.append(nowArticle)
         except:
             None
         root.after(changeSpeed,lambda: show_articles(articles))
@@ -276,21 +283,26 @@ def show_articles(articles):
             newNewsImage= ImageTk.PhotoImage(newNewsImage)
             canvas.itemconfig(newsImage, image = newNewsImage)
             canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
+            articles.append(nowArticle)
         except:
             print(nowArticle)
             print("fail")
         root.after(changeSpeed,lambda: show_articles(articles))
     elif "IT-Support" in nowArticle[0]:
-        title = "IT-Support"
-        strong = "Bei Fragen oder Problemen Kai Selenski und Jannik Becker eine E-Mail schicken."
-        basewidth = 600
-        newNewsImage = Image.open(osPath + "//Icon//itSupport.jpg")
-        wpercent = (basewidth/float(newNewsImage.size[0]))
-        hsize = int((float(newNewsImage.size[1])*float(wpercent)))
-        newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
-        newNewsImage= ImageTk.PhotoImage(newNewsImage)
-        canvas.itemconfig(newsImage, image = newNewsImage)
-        canvas.itemconfig(titel, text = addLineBreaks(title,strong,"IT-Support",""))
+        try:
+            title = "IT-Support"
+            strong = "Bei Fragen oder Problemen Kai Selenski und Jannik Becker eine E-Mail schicken."
+            basewidth = 600
+            newNewsImage = Image.open(osPath + "//Icon//itSupport.jpg")
+            wpercent = (basewidth/float(newNewsImage.size[0]))
+            hsize = int((float(newNewsImage.size[1])*float(wpercent)))
+            newNewsImage = newNewsImage.resize((basewidth,hsize), Image.ANTIALIAS)
+            newNewsImage= ImageTk.PhotoImage(newNewsImage)
+            canvas.itemconfig(newsImage, image = newNewsImage)
+            canvas.itemconfig(titel, text = addLineBreaks(title,strong,"IT-Support",""))
+            articles.append(nowArticle)
+        except:
+            print("itFail")
         root.after(changeSpeed,lambda: show_articles(articles))
     else:
         try:
@@ -303,6 +315,7 @@ def show_articles(articles):
             newNewsImage= ImageTk.PhotoImage(newNewsImage)
             canvas.itemconfig(newsImage, image = newNewsImage)
             canvas.itemconfig(titel, text = addLineBreaks(nowArticle[0],nowArticle[1],nowArticle[3],nowArticle[2]))
+            articles.append(nowArticle)
         except:
             print(nowArticle)
             print("fail")

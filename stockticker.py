@@ -34,6 +34,7 @@ class AplicationTkinter(Frame):
         self.txt_ticker_widget.tag_configure("even", foreground="white")
         self.tag = {CHAR_DOWN: "down", CHAR_EVEN: "even", CHAR_UP: "up"}
 
+
     def scroll_ticker(self):
         self.txt_ticker_widget.configure(state=NORMAL)
         self.txt_ticker_widget.insert(END, self.market_one.get_next_character(),
@@ -41,6 +42,12 @@ class AplicationTkinter(Frame):
         self.txt_ticker_widget.see(END)
         self.txt_ticker_widget.configure(state=DISABLED)
         self.txt_ticker_widget.after(SPEED, self.scroll_ticker)  
+    
+    def clear_text(self):
+        print(self.txt_ticker_widget.get("1.0",END))
+        self.txt_ticker_widget.configure(state=NORMAL)
+        self.txt_ticker_widget.delete("1.0",END)
+        self.txt_ticker_widget.configure(state=DISABLED)
 
 
 class StockTicker():
