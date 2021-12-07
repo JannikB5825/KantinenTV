@@ -117,47 +117,56 @@ def getLogos():
 
 
 def get_weather():
-    url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
-    result = requests.get(url, verify=False)
-    if result:
-        json = json_.loads(result.text)
-        final = [json['daily'][0]['temp']["max"],json['daily'][0]['temp']["min"],json['daily'][0]['weather'][0]['icon'],json['daily'][0]['weather'][0]['description']]
-        for x in range(1,6):
-            final.append(json['daily'][x]['temp']["max"])
-            final.append(json['daily'][x]['temp']["min"])
-            final.append(json['daily'][x]['weather'][0]['icon'])
-        return final
-    else:
-        return None
+    try:
+        url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
+        result = requests.get(url, verify=False)
+        if result:
+            json = json_.loads(result.text)
+            final = [json['daily'][0]['temp']["max"],json['daily'][0]['temp']["min"],json['daily'][0]['weather'][0]['icon'],json['daily'][0]['weather'][0]['description']]
+            for x in range(1,6):
+                final.append(json['daily'][x]['temp']["max"])
+                final.append(json['daily'][x]['temp']["min"])
+                final.append(json['daily'][x]['weather'][0]['icon'])
+            return final
+        else:
+            return None
+    except:
+        get_weather()
 
 
 def get_current():
-    time.sleep(1)
-    url = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
-    result = requests.get(url, verify=False)
-    if result:
-        json = json_.loads(result.text)
-        x = [json["weather"][0]["description"], json["weather"][0]["icon"],json["main"]["temp"],int(json["weather"][0]["id"])]
-        return x
-    else:
-        return None
+    try:
+        time.sleep(1)
+        url = 'https://api.openweathermap.org/data/2.5/weather?q=gruenberg&lang=de&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
+        result = requests.get(url, verify=False)
+        if result:
+            json = json_.loads(result.text)
+            x = [json["weather"][0]["description"], json["weather"][0]["icon"],json["main"]["temp"],int(json["weather"][0]["id"])]
+            return x
+        else:
+            return None
+    except:
+        get_current()
 
 
 def get_date():
     global kuerzel
-    url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
-    time.sleep(1)
-    result = requests.get(url, verify=False)
-    if result:
-        json = json_.loads(result.text)
-        final = []
-        for x in range(2,6):
-            final.append(kuerzel[datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%A')] + 
-                         " " + 
-                         datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%d.%m'))
-        return final
-    else:
-        return None 
+    try:
+        url = 'https://api.openweathermap.org/data/2.5/onecall?lat=50.59&lon=8.95&lang=de&exclude=current,minutely,hourly,alerts&units=metric&appid=013c319d6be43d6ff15ca9d6325c8fb2'
+        time.sleep(1)
+        result = requests.get(url, verify=False)
+        if result:
+            json = json_.loads(result.text)
+            final = []
+            for x in range(2,6):
+                final.append(kuerzel[datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%A')] + 
+                             " " + 
+                             datetime.utcfromtimestamp(int(json['daily'][x]['dt'])).strftime('%d.%m'))
+            return final
+        else:
+            return None 
+    except:
+        get_date()
 
 
 def update_clock():
@@ -167,59 +176,71 @@ def update_clock():
 
 
 def get_all_article():
-    url = 'https://newsapi.org/v2/top-headlines?country=de&apiKey=cc1ce8c5d19b4a198fcd040fcbb47a6a'
-    result = requests.get(url, verify=False)        
-    if result:
-        json = json_.loads(result.text)
-        articles = []
-        for x in json["articles"]:
-            if x["urlToImage"] != "null":
-                articles.append([x["title"],
-                                 x["description"],
-                                 x["author"],
-                                 x["publishedAt"],
-                                 x["urlToImage"],
-                ])
-        return articles
+    try:
+        url = 'https://newsapi.org/v2/top-headlines?country=de&apiKey=cc1ce8c5d19b4a198fcd040fcbb47a6a'
+        result = requests.get(url, verify=False)        
+        if result:
+            json = json_.loads(result.text)
+            articles = []
+            for x in json["articles"]:
+                if x["urlToImage"] != "null":
+                    articles.append([x["title"],
+                                     x["description"],
+                                     x["author"],
+                                     x["publishedAt"],
+                                     x["urlToImage"],
+                    ])
+            return articles
+    except:
+        get_all_article()
 
 
 def setTeams():
-    url3 = "https://api.openligadb.de/getbltable/bl1/2021"
-    time.sleep(1)
-    result = requests.get(url3, verify=False)
-    tableTeams = getTeams()
-    if result:
-        json = json_.loads(result.text)
-        for i in range(0,18):
-            canvas.itemconfig(tableTeams[i], text = json[i]["shortName"])
+    try:
+        url3 = "https://api.openligadb.de/getbltable/bl1/2021"
+        time.sleep(1)
+        result = requests.get(url3, verify=False)
+        tableTeams = getTeams()
+        if result:
+            json = json_.loads(result.text)
+            for i in range(0,18):
+                canvas.itemconfig(tableTeams[i], text = json[i]["shortName"])
+    except:
+        setTeams()
 
 
 def setPoints():
-    url3 = "https://api.openligadb.de/getbltable/bl1/2021"
-    time.sleep(1)
-    result = requests.get(url3, verify=False)
-    tablePoints = getPoints()
-    if result:
-        json = json_.loads(result.text)
-        for i in range(0,18):
-            canvas.itemconfig(tablePoints[i], text = json[i]["points"])
+    try:
+        url3 = "https://api.openligadb.de/getbltable/bl1/2021"
+        time.sleep(1)
+        result = requests.get(url3, verify=False)
+        tablePoints = getPoints()
+        if result:
+            json = json_.loads(result.text)
+            for i in range(0,18):
+                canvas.itemconfig(tablePoints[i], text = json[i]["points"])
+    except:
+        setPoints()
 
 
 def setLogos():
-    url3 = "https://api.openligadb.de/getbltable/bl1/2021"
-    time.sleep(1)
-    result = requests.get(url3, verify=False)
-    if result:
-        json = json_.loads(result.text)
-        for i in range(0,18):
-            baseheight = 32
-            logoName = json[i]["shortName"]
-            logos[i] = Image.open(osPath + f"Wappen\\{logoName}.png")
-            wpercent = (baseheight/float(logos[i].size[1]))
-            hsize = int((float(logos[i].size[0])*float(wpercent)))
-            logos[i] = logos[i].resize((hsize,baseheight), Image.ANTIALIAS)
-            logos[i]= ImageTk.PhotoImage(logos[i])
-            canvas.itemconfig(tableLogos[i], image = logos[i])
+    try:
+        url3 = "https://api.openligadb.de/getbltable/bl1/2021"
+        time.sleep(1)
+        result = requests.get(url3, verify=False)
+        if result:
+            json = json_.loads(result.text)
+            for i in range(0,18):
+                baseheight = 32
+                logoName = json[i]["shortName"]
+                logos[i] = Image.open(osPath + f"Wappen\\{logoName}.png")
+                wpercent = (baseheight/float(logos[i].size[1]))
+                hsize = int((float(logos[i].size[0])*float(wpercent)))
+                logos[i] = logos[i].resize((hsize,baseheight), Image.ANTIALIAS)
+                logos[i]= ImageTk.PhotoImage(logos[i])
+                canvas.itemconfig(tableLogos[i], image = logos[i])
+    except:
+        setLogos()
 
 
 def addLineBreaks(title, desc, date, publisher):
