@@ -269,7 +269,6 @@ def addLineBreaks(title, desc, date, publisher):
 def show_articles(articles):
     global newNewsImage, changeSpeed, aplicacion, faktor, counter
     configWeather()
-    print(counter)
     counter += 1
     if counter == 10:
         aplicacion.clear_text()
